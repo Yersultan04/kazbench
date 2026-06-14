@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  # -----------------------------------------------------------------------
+  # Job 1: Data validation + dummy eval end-to-end + test suite
+  # -----------------------------------------------------------------------
+  test:
+    name: Test (Python 3.11, ubuntu-latest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pytest (only non-stdlib dependency for CI)
+        run: pip install pytest --quiet
+
+      # ---- Data validation ------------------------------------------------
+      - name: Validate benchmark/dev/ data
+        run: python tools/data/validate.py benchmark/dev/
+
+      # ---- Dummy eval end-to-end ------------------------------------------
+      - name: Run dummy eval end-to-end
+        run: python -m harness.run_eval --model dummy --split dev --out results/ci-dummy.json
+
+      # ---- Test suite -----------------------------------------------------
+      - name: Run pytest
+        run: python -m pytest tests/ -v --tb=short
+
+  # -----------------------------------------------------------------------
+  # Job 2: Schema / canary sanity (runs in parallel with job 1)
+  # -----------------------------------------------------------------------
+  schema-canary:
+    name: Schema and canary sanity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify benchmark schema.md exists
+        run: |
+          test -f benchmark/schema.md || (echo "ERROR: benchmark/schema.md missing" && exit 1)
+
+      - name: Run data stats (canary coverage report)
+        run: python tools/data/stats.py benchmark/dev/
+
+      - name: Verify dummy result JSON structure
+        run: |
+          python - <<'EOF'
+          import json, sys
+
+          REQUIRED_TASKS = [
+              "knowledge_mc",
+              "reading_comprehension",
+              "grammar_morphology",
+              "sentiment",
+              "translation",
+              "instruction_following",
+          ]
+
+          # Re-run eval to get a fresh result
+          import subprocess, pathlib
+          result = subprocess.run(
+              [sys.executable, "-m", "harness.run_eval",
+               "--model", "dummy", "--split", "dev",
+               "--out", "results/ci-canary.json"],
+              capture_output=True, text=True
+          )
+          if result.returncode != 0:
+              print("STDOUT:", result.stdout)
+              print("STDERR:", result.stderr)
+              sys.exit(result.returncode)
+
+          data = json.loads(pathlib.Path("results/ci-canary.json").read_text())
+
+          assert "overall" in data, "missing 'overall' key"
+          assert 0 <= data["overall"] <= 100, f"overall out of range: {data['overall']}"
+          assert "tasks" in data, "missing 'tasks' key"
+
+          tasks_present = set(data["tasks"].keys())
+          missing = set(REQUIRED_TASKS) - tasks_present
+          assert not missing, f"missing tasks in result: {missing}"
+
+          print("Canary sanity check PASSED")
+          print(f"  overall={data['overall']}")
+          for t in REQUIRED_TASKS:
+              info = data["tasks"][t]
+              print(f"  {t}: metric={info['metric']} score={info['score']} n={info['n']}")
+          EOF
