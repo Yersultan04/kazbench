@@ -1,0 +1,8 @@
+# Core harness has NO required third-party deps (pure stdlib) for the dummy baseline.
+
+# Optional — only needed to evaluate real models:
+# anthropic>=0.40      # for --model claude
+# openai>=1.40         # for --model openai (incl. local/vLLM via OPENAI_BASE_URL)
+
+# Optional — leaderboard app (Sprint 3):
+# gradio>=4.0

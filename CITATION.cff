@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use KazBench, please cite it as below."
+title: "KazBench: An open benchmark for evaluating large language models on the Kazakh language"
+authors:
+  - family-names: "Akhmer"
+    given-names: "Yersultan"
+keywords:
+  - Kazakh
+  - low-resource NLP
+  - LLM evaluation
+  - benchmark
+  - leaderboard
+license: MIT
+version: 0.1.0
+date-released: "2026-06-14"

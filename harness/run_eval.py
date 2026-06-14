@@ -1,0 +1,430 @@
+"""
+KazBench evaluation runner.
+
+Usage:
+    python -m harness.run_eval --model dummy --split dev --out results/dummy.json
+    python -m harness.run_eval --model claude --split dev --out results/claude.json
+    python -m harness.run_eval --model openai --model-id llama3 --split dev --out results/llama3.json
+
+All console output uses ASCII-safe characters only (Windows cp1251 safe).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+import warnings
+from pathlib import Path
+from typing import Any
+
+from harness import __version__
+from harness.metrics import accuracy, chrf_sentence, judge_score
+from harness.models import BaseModel, build_model
+
+# ---------------------------------------------------------------------------
+# Task names (must match schema.md)
+# ---------------------------------------------------------------------------
+
+ALL_TASKS = [
+    "knowledge_mc",
+    "reading_comprehension",
+    "grammar_morphology",
+    "sentiment",
+    "translation",
+    "instruction_following",
+]
+
+# Tasks scored with accuracy (MC or classification)
+ACCURACY_TASKS = {"knowledge_mc", "reading_comprehension", "grammar_morphology", "sentiment"}
+# Tasks scored with chrF
+CHRF_TASKS = {"translation"}
+# Tasks scored with LLM judge
+JUDGE_TASKS = {"instruction_following"}
+
+# ---------------------------------------------------------------------------
+# Prompt builders
+# ---------------------------------------------------------------------------
+
+def _choices_block(choices: list[str]) -> str:
+    """Format a choices list as '0. ...\n1. ...'"""
+    return "\n".join(f"{i}. {c}" for i, c in enumerate(choices))
+
+
+def build_prompt_knowledge_mc(item: dict) -> str:
+    return (
+        f"Сурак: {item['question']}\n\n"
+        f"{_choices_block(item['choices'])}\n\n"
+        "Жауап нomerini gana jazyn (0, 1, 2, ...): "
+    )
+
+
+def build_prompt_reading_comprehension(item: dict) -> str:
+    return (
+        f"Matin:\n{item['passage']}\n\n"
+        f"Sural: {item['question']}\n\n"
+        f"{_choices_block(item['choices'])}\n\n"
+        "Jawap nomerin jazyn (0, 1, 2, ...): "
+    )
+
+
+def build_prompt_grammar_morphology(item: dict) -> str:
+    return (
+        f"Grammatika suraky: {item['question']}\n\n"
+        f"{_choices_block(item['choices'])}\n\n"
+        "Jawap nomerin jazyn (0, 1, 2, ...): "
+    )
+
+
+def build_prompt_sentiment(item: dict) -> str:
+    return (
+        f"Kelesi matinnin sezimdi anyktay: '{item['text']}'\n\n"
+        "Zhauyp: 'on' (ijobaly), 'teris' (terisshi) nemese 'beitarap' "
+        "(beyjaiy) dep jazyn. Tek bir soz gana."
+    )
+
+
+def build_prompt_translation(item: dict) -> str:
+    src = item["source_lang"]
+    tgt = item["target_lang"]
+    text = item["source_text"]
+    return (
+        f"Kelesi matindi {src} tilinen {tgt} tiline audar:\n\n"
+        f"{text}\n\n"
+        "Tek audarmany jazyn, baska narsesin kospa."
+    )
+
+
+def build_prompt_instruction_following(item: dict) -> str:
+    return item["instruction"]
+
+
+# ---------------------------------------------------------------------------
+# Answer parsers
+# ---------------------------------------------------------------------------
+
+_DIGIT_RE = re.compile(r"\b(\d)\b")
+
+
+def parse_mc(response: str, num_choices: int) -> int:
+    """
+    Parse a multiple-choice answer from the model response.
+
+    Tries to find the first standalone digit in [0, num_choices-1].
+    Falls back to -1 (no valid answer) if nothing matches.
+    """
+    for m in _DIGIT_RE.finditer(response.strip()):
+        digit = int(m.group(1))
+        if 0 <= digit < num_choices:
+            return digit
+    # Second pass: any digit at all
+    digits = re.findall(r"\d", response)
+    if digits:
+        d = int(digits[0])
+        if 0 <= d < num_choices:
+            return d
+    return -1  # unparseable -> wrong
+
+
+_SENTIMENT_MAP = {
+    # Positive forms
+    "on":          "on",
+    "ijobaly":     "on",
+    "positive":    "on",
+    # Negative forms
+    "teris":       "teris",
+    "terisshi":    "teris",
+    "negative":    "teris",
+    # Neutral forms
+    "beitarap":    "beitarap",
+    "beyjaiy":     "beitarap",
+    "neutral":     "beitarap",
+}
+
+# Map Cyrillic Kazakh labels to our ASCII internal keys
+_CYRILLIC_SENTIMENT = {
+    "өң": "on",         # 'он' / positive variant; but label is оң
+    "оң": "on",         # оң
+    "теріс": "teris",    # теріс
+    "бейтарап": "beitarap",  # бейтарап
+}
+
+# The gold labels in schema.md are Cyrillic: оң / теріс / бейтарап
+_GOLD_LABEL_TO_INTERNAL = {
+    "оң": "on",         # оң
+    "теріс": "teris",
+    "бейтарап": "beitarap",
+}
+
+
+def parse_sentiment(response: str) -> str:
+    """
+    Map a sentiment response string to one of: on / teris / beitarap.
+
+    Returns "unknown" if no label found.
+    """
+    clean = response.strip().lower()
+
+    # Try Cyrillic label first (model may output in Kazakh script)
+    for cyr, internal in _CYRILLIC_SENTIMENT.items():
+        if cyr in clean:
+            return internal
+
+    # Try transliterated / English labels
+    for token, internal in _SENTIMENT_MAP.items():
+        if token in clean:
+            return internal
+
+    # Substring scan on first word
+    first_word = clean.split()[0] if clean.split() else ""
+    for token, internal in _SENTIMENT_MAP.items():
+        if first_word.startswith(token):
+            return internal
+
+    return "unknown"
+
+
+def gold_sentiment(label: str) -> str:
+    """Convert a gold Cyrillic sentiment label to internal ASCII key."""
+    return _GOLD_LABEL_TO_INTERNAL.get(label, label.lower())
+
+
+# ---------------------------------------------------------------------------
+# Per-task evaluator
+# ---------------------------------------------------------------------------
+
+def evaluate_task(
+    task_name: str,
+    items: list[dict],
+    model: BaseModel,
+) -> dict[str, Any]:
+    """
+    Run evaluation for a single task.
+
+    Returns:
+        {"metric": str, "score": float, "n": int}
+        score is in [0,1] for accuracy/judge, [0,100] for chrF.
+    """
+    n = len(items)
+    if n == 0:
+        return {"metric": "accuracy", "score": 0.0, "n": 0}
+
+    if task_name in ACCURACY_TASKS:
+        preds: list[int | str] = []
+        golds: list[int | str] = []
+
+        for item in items:
+            if task_name == "sentiment":
+                prompt = build_prompt_sentiment(item)
+                response = model.generate(prompt)
+                preds.append(parse_sentiment(response))
+                golds.append(gold_sentiment(item["label"]))
+            else:
+                if task_name == "knowledge_mc":
+                    prompt = build_prompt_knowledge_mc(item)
+                elif task_name == "reading_comprehension":
+                    prompt = build_prompt_reading_comprehension(item)
+                else:  # grammar_morphology
+                    prompt = build_prompt_grammar_morphology(item)
+                response = model.generate(prompt)
+                preds.append(parse_mc(response, len(item["choices"])))
+                golds.append(item["answer"])
+
+        score = accuracy(preds, golds)
+        return {"metric": "accuracy", "score": score, "n": n}
+
+    elif task_name in CHRF_TASKS:
+        scores: list[float] = []
+        for item in items:
+            prompt = build_prompt_translation(item)
+            hypothesis = model.generate(prompt)
+            s = chrf_sentence(hypothesis, item["reference"])
+            scores.append(s)
+        avg = sum(scores) / len(scores) if scores else 0.0
+        return {"metric": "chrF", "score": avg, "n": n}
+
+    elif task_name in JUDGE_TASKS:
+        raw_scores: list[float] = []
+        for item in items:
+            prompt = build_prompt_instruction_following(item)
+            response = model.generate(prompt)
+            s = judge_score(response, item["rubric"], model)
+            raw_scores.append(s)
+        avg = sum(raw_scores) / len(raw_scores) if raw_scores else 0.0
+        return {"metric": "judge", "score": avg, "n": n}
+
+    else:
+        warnings.warn(f"Unknown task '{task_name}'; skipping.")
+        return {"metric": "unknown", "score": 0.0, "n": n}
+
+
+# ---------------------------------------------------------------------------
+# Results writer
+# ---------------------------------------------------------------------------
+
+def _overall_score(task_results: dict[str, dict]) -> float:
+    """
+    Compute macro-average across tasks.
+
+    Accuracy and judge scores are already in [0,1] -> multiply by 100.
+    chrF is in [0,100] -> use as-is.
+    Returns the macro-average in [0, 100].
+    """
+    if not task_results:
+        return 0.0
+    values: list[float] = []
+    for info in task_results.values():
+        if info["n"] == 0:
+            continue
+        metric = info["metric"]
+        score = info["score"]
+        if metric in ("accuracy", "judge"):
+            values.append(score * 100.0)
+        else:  # chrF already in [0,100]
+            values.append(score)
+    return sum(values) / len(values) if values else 0.0
+
+
+def write_results(
+    out_path: Path,
+    model_label: str,
+    adapter_name: str,
+    split: str,
+    task_results: dict[str, dict],
+) -> None:
+    """Write results JSON in the schema.md format."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "model": model_label,
+        "adapter": adapter_name,
+        "kazbench_version": __version__,
+        "split": split,
+        "overall": round(_overall_score(task_results), 4),
+        "tasks": {
+            task: {
+                "metric": info["metric"],
+                "score": round(info["score"], 6),
+                "n": info["n"],
+            }
+            for task, info in task_results.items()
+        },
+    }
+    out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        prog="python -m harness.run_eval",
+        description="KazBench evaluation harness",
+    )
+    parser.add_argument(
+        "--model",
+        required=True,
+        choices=["dummy", "claude", "openai"],
+        help="Model adapter to use.",
+    )
+    parser.add_argument(
+        "--model-id",
+        default=None,
+        help="Model identifier (e.g. claude-haiku-4-5-20251001, gpt-4o-mini).",
+    )
+    parser.add_argument(
+        "--split",
+        default="dev",
+        help="Dataset split to evaluate (default: dev).",
+    )
+    parser.add_argument(
+        "--tasks",
+        nargs="*",
+        default=None,
+        help="Subset of tasks to run. Defaults to all 6.",
+    )
+    parser.add_argument(
+        "--out",
+        required=True,
+        help="Output JSON path, e.g. results/dummy.json.",
+    )
+    parser.add_argument(
+        "--data-dir",
+        default=None,
+        help="Root directory containing benchmark/<split>/ folders. "
+             "Defaults to the parent of the harness/ package.",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parse_args(argv)
+
+    # Resolve data root
+    harness_pkg_dir = Path(__file__).parent
+    repo_root = harness_pkg_dir.parent
+    data_root = Path(args.data_dir) if args.data_dir else repo_root
+
+    split_dir = data_root / "benchmark" / args.split
+
+    # Build model
+    print(f"[kazbench] Building model adapter: {args.model}")
+    model = build_model(args.model, args.model_id)
+    model_label = args.model_id or args.model
+
+    # Determine tasks
+    tasks_to_run = args.tasks if args.tasks else ALL_TASKS
+
+    task_results: dict[str, dict] = {}
+
+    for task_name in tasks_to_run:
+        task_file = split_dir / f"{task_name}.jsonl"
+        if not task_file.exists():
+            print(
+                f"[kazbench] WARNING: {task_file} not found -- skipping "
+                f"(data agent may not have written it yet)."
+            )
+            continue
+
+        # Load items
+        items: list[dict] = []
+        with task_file.open(encoding="utf-8-sig") as f:  # utf-8-sig strips BOM if present
+            for lineno, line in enumerate(f, 1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    items.append(json.loads(line))
+                except json.JSONDecodeError as exc:
+                    print(
+                        f"[kazbench] WARNING: {task_file}:{lineno} -- "
+                        f"invalid JSON ({exc}), skipping line."
+                    )
+
+        n = len(items)
+        print(f"[kazbench] Task={task_name}  n={n}  ...", end="", flush=True)
+        result = evaluate_task(task_name, items, model)
+        metric = result["metric"]
+        score = result["score"]
+        if metric in ("accuracy", "judge"):
+            display = f"{score * 100:.1f}%"
+        else:
+            display = f"{score:.2f}"
+        print(f"  {metric}={display}")
+        task_results[task_name] = result
+
+    # Write output
+    out_path = Path(args.out)
+    write_results(out_path, model_label, args.model, args.split, task_results)
+
+    overall = _overall_score(task_results)
+    tasks_ran = sum(1 for r in task_results.values() if r["n"] > 0)
+    print(f"[kazbench] Done. Tasks run: {tasks_ran}  Overall: {overall:.2f}/100")
+    print(f"[kazbench] Results -> {out_path.resolve()}")
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

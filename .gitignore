@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# private TEST split must never be committed publicly
+benchmark/test/
+
+# local model results are submitted via PR, not committed wholesale
+results/*.json
+!results/dummy.json

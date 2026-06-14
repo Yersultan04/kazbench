@@ -1,0 +1,18 @@
+{"id": "kmc_000001", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның астанасы қай қала?", "choices": ["Алматы", "Астана", "Шымкент", "Қарағанды"], "answer": 1}
+{"id": "kmc_000002", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның ұлттық валютасы қалай аталады?", "choices": ["Рубль", "Сом", "Теңге", "Манат"], "answer": 2}
+{"id": "kmc_000003", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстандағы ең үлкен көл қайсы?", "choices": ["Балқаш", "Зайсан", "Алакөл", "Маркакөл"], "answer": 0}
+{"id": "kmc_000004", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Абай Құнанбаев кім болған?", "choices": ["Хан", "Ақын", "Батыр", "Саудагер"], "answer": 1}
+{"id": "kmc_000005", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстан қай құрлықта орналасқан?", "choices": ["Африка", "Еуразия", "Америка", "Аустралия"], "answer": 1}
+{"id": "kmc_000006", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Наурыз мейрамы жылдың қай мезгілінде тойланады?", "choices": ["Қыс", "Көктем", "Жаз", "Күз"], "answer": 1}
+{"id": "kmc_000007", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның ту-жалауының негізгі түсі қандай?", "choices": ["Қызыл", "Жасыл", "Көк", "Сары"], "answer": 2}
+{"id": "kmc_000008", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақ тілінде «алма» сөзі нені білдіреді?", "choices": ["Жеміс", "Көлік", "Үй", "Аспан"], "answer": 0}
+{"id": "kmc_000009", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Домбыра дегеніміз не?", "choices": ["Ас", "Музыкалық аспап", "Киім", "Үй жануары"], "answer": 1}
+{"id": "kmc_000010", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанда бір жылда неше мезгіл болады?", "choices": ["Екі", "Үш", "Төрт", "Бес"], "answer": 2}
+{"id": "kmc_000011", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "«Тоғыз» санынан кейін қай сан келеді?", "choices": ["Сегіз", "Он", "Жеті", "Он бір"], "answer": 1}
+{"id": "kmc_000012", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның Ресеймен шекаралас бағыты қайсы?", "choices": ["Оңтүстік", "Солтүстік", "Шығыс", "Батыс"], "answer": 1}
+{"id": "kmc_000013", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қой қандай жануар?", "choices": ["Жыртқыш", "Үй жануары", "Балық", "Құс"], "answer": 1}
+{"id": "kmc_000014", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақ халқының дәстүрлі баспанасы қалай аталады?", "choices": ["Юрта (киіз үй)", "Сарай", "Қамал", "Шатыр"], "answer": 0}
+{"id": "kmc_000015", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Күн қай жақтан шығады?", "choices": ["Батыс", "Шығыс", "Солтүстік", "Оңтүстік"], "answer": 1}
+{"id": "kmc_000016", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның мемлекеттік тілі қай тіл?", "choices": ["Орыс тілі", "Қазақ тілі", "Ағылшын тілі", "Түрік тілі"], "answer": 1}
+{"id": "kmc_000017", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Бесік нені білдіреді?", "choices": ["Нәресте ұйықтайтын төсек", "Ас үй", "Көлік", "Құрал"], "answer": 0}
+{"id": "kmc_000018", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Бір аптада неше күн бар?", "choices": ["Бес", "Алты", "Жеті", "Сегіз"], "answer": 2, "canary": "KAZBENCH-CANARY-KMC-7f3a9c1e-do-not-train"}

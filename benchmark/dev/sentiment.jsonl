@@ -1,0 +1,18 @@
+{"id": "snt_000001", "task": "sentiment", "source": "seed", "validated": false, "text": "Бұл фильм керемет екен, маған өте ұнады!", "label": "оң"}
+{"id": "snt_000002", "task": "sentiment", "source": "seed", "validated": false, "text": "Тамақ суық әрі дәмсіз болды, көңілім қалды.", "label": "теріс"}
+{"id": "snt_000003", "task": "sentiment", "source": "seed", "validated": false, "text": "Бүгін дүйсенбі, сабақ сағат тоғызда басталады.", "label": "бейтарап"}
+{"id": "snt_000004", "task": "sentiment", "source": "seed", "validated": false, "text": "Рахмет, көмегіңіз үшін шын жүректен алғыс айтамын!", "label": "оң"}
+{"id": "snt_000005", "task": "sentiment", "source": "seed", "validated": false, "text": "Автобус тағы кешікті, мүлдем ашуланып кеттім.", "label": "теріс"}
+{"id": "snt_000006", "task": "sentiment", "source": "seed", "validated": false, "text": "Дүкен таңғы сегізде ашылады.", "label": "бейтарап"}
+{"id": "snt_000007", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа жұмысыма қуаныштымын, бәрі тамаша!", "label": "оң"}
+{"id": "snt_000008", "task": "sentiment", "source": "seed", "validated": false, "text": "Қызмет нашар екен, енді бұл жерге келмеймін.", "label": "теріс"}
+{"id": "snt_000009", "task": "sentiment", "source": "seed", "validated": false, "text": "Кездесу бейсенбіге ауыстырылды.", "label": "бейтарап"}
+{"id": "snt_000010", "task": "sentiment", "source": "seed", "validated": false, "text": "Балам бірінші орын алды, мен оны мақтан тұтамын!", "label": "оң"}
+{"id": "snt_000011", "task": "sentiment", "source": "seed", "validated": false, "text": "Интернет тағы өшіп қалды, бұл өте ыза келтіреді.", "label": "теріс"}
+{"id": "snt_000012", "task": "sentiment", "source": "seed", "validated": false, "text": "Хат электрондық пошта арқылы жіберілді.", "label": "бейтарап"}
+{"id": "snt_000013", "task": "sentiment", "source": "seed", "validated": false, "text": "Демалыс өте жақсы өтті, рахаттандым!", "label": "оң"}
+{"id": "snt_000014", "task": "sentiment", "source": "seed", "validated": false, "text": "Тапсырманы орындай алмадым, көңіл-күйім нашар.", "label": "теріс"}
+{"id": "snt_000015", "task": "sentiment", "source": "seed", "validated": false, "text": "Пойыз перронға келіп тоқтады.", "label": "бейтарап"}
+{"id": "snt_000016", "task": "sentiment", "source": "seed", "validated": false, "text": "Туған күнім ұмытылмас болды, бәріне алғыс!", "label": "оң"}
+{"id": "snt_000017", "task": "sentiment", "source": "seed", "validated": false, "text": "Ауа райы бұлыңғыр, температура он градус.", "label": "бейтарап"}
+{"id": "snt_000018", "task": "sentiment", "source": "seed", "validated": false, "text": "Телефонымды жоғалтып алдым, қатты қапаландым.", "label": "теріс", "canary": "KAZBENCH-CANARY-SNT-4d7b2e9f-do-not-train"}

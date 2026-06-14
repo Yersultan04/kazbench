@@ -1,0 +1,39 @@
+{
+  "model": "dummy",
+  "adapter": "dummy",
+  "kazbench_version": "0.1.0",
+  "split": "dev",
+  "overall": 25.787,
+  "tasks": {
+    "knowledge_mc": {
+      "metric": "accuracy",
+      "score": 0.222222,
+      "n": 18
+    },
+    "reading_comprehension": {
+      "metric": "accuracy",
+      "score": 0.125,
+      "n": 16
+    },
+    "grammar_morphology": {
+      "metric": "accuracy",
+      "score": 1.0,
+      "n": 16
+    },
+    "sentiment": {
+      "metric": "accuracy",
+      "score": 0.0,
+      "n": 18
+    },
+    "translation": {
+      "metric": "chrF",
+      "score": 0.0,
+      "n": 18
+    },
+    "instruction_following": {
+      "metric": "judge",
+      "score": 0.2,
+      "n": 16
+    }
+  }
+}
