@@ -220,6 +220,7 @@ def evaluate_task(
     task_name: str,
     items: list[dict],
     model: BaseModel,
+    predictions: list[dict] | None = None,
 ) -> dict[str, Any]:
     """
     Run evaluation for a single task.
@@ -227,6 +228,9 @@ def evaluate_task(
     Returns:
         {"metric": str, "score": float, "n": int}
         score is in [0,1] for accuracy/judge, [0,100] for chrF.
+
+    If `predictions` is given, per-item records {id, task, pred, gold, correct}
+    are appended for accuracy tasks (used by the council triage tool).
     """
     n = len(items)
     if n == 0:
@@ -240,8 +244,8 @@ def evaluate_task(
             if task_name == "sentiment":
                 prompt = build_prompt_sentiment(item)
                 response = model.generate(prompt, task=task_name)
-                preds.append(parse_sentiment(response))
-                golds.append(gold_sentiment(item["label"]))
+                pred = parse_sentiment(response)
+                gold = gold_sentiment(item["label"])
             else:
                 if task_name == "knowledge_mc":
                     prompt = build_prompt_knowledge_mc(item)
@@ -250,8 +254,18 @@ def evaluate_task(
                 else:  # grammar_morphology
                     prompt = build_prompt_grammar_morphology(item)
                 response = model.generate(prompt, task=task_name)
-                preds.append(parse_mc(response, len(item["choices"])))
-                golds.append(item["answer"])
+                pred = parse_mc(response, len(item["choices"]))
+                gold = item["answer"]
+            preds.append(pred)
+            golds.append(gold)
+            if predictions is not None:
+                predictions.append({
+                    "id": item.get("id", ""),
+                    "task": task_name,
+                    "pred": pred,
+                    "gold": gold,
+                    "correct": pred == gold,
+                })
 
         score = accuracy(preds, golds)
         return {"metric": "accuracy", "score": score, "n": n}
@@ -378,6 +392,11 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Root directory containing benchmark/<split>/ folders. "
              "Defaults to the parent of the harness/ package.",
     )
+    parser.add_argument(
+        "--save-predictions",
+        default=None,
+        help="Optional path to dump per-item predictions JSON (for council triage).",
+    )
     return parser.parse_args(argv)
 
 
@@ -414,6 +433,7 @@ def main(argv: list[str] | None = None) -> int:
     tasks_to_run = args.tasks if args.tasks else ALL_TASKS
 
     task_results: dict[str, dict] = {}
+    all_predictions: list[dict] | None = [] if args.save_predictions else None
 
     for task_name in tasks_to_run:
         task_file = split_dir / f"{task_name}.jsonl"
@@ -450,7 +470,7 @@ def main(argv: list[str] | None = None) -> int:
 
         n = len(items)
         print(f"[kazbench] Task={task_name}  n={n}  ...", end="", flush=True)
-        result = evaluate_task(task_name, items, model)
+        result = evaluate_task(task_name, items, model, predictions=all_predictions)
         metric = result["metric"]
         score = result["score"]
         if metric in ("accuracy", "judge"):
@@ -462,6 +482,18 @@ def main(argv: list[str] | None = None) -> int:
 
     # Write output
     write_results(out_path, model_label, args.model, args.split, task_results)
+
+    if all_predictions is not None:
+        pred_path = Path(args.save_predictions).resolve()
+        pred_path.parent.mkdir(exist_ok=True)
+        pred_path.write_text(
+            json.dumps(
+                {"model": model_label, "split": args.split, "predictions": all_predictions},
+                ensure_ascii=False, indent=2,
+            ),
+            encoding="utf-8",
+        )
+        print(f"[kazbench] Predictions -> {pred_path}")
 
     overall = _overall_score(task_results)
     tasks_ran = sum(1 for r in task_results.values() if r["n"] > 0)
