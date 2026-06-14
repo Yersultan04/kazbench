@@ -3,31 +3,31 @@
   "adapter": "dummy",
   "kazbench_version": "0.1.0",
   "split": "dev",
-  "overall": 25.787,
+  "overall": 23.2171,
   "tasks": {
     "knowledge_mc": {
       "metric": "accuracy",
-      "score": 0.222222,
+      "score": 0.277778,
       "n": 18
     },
     "reading_comprehension": {
       "metric": "accuracy",
-      "score": 0.125,
+      "score": 0.25,
       "n": 16
     },
     "grammar_morphology": {
       "metric": "accuracy",
-      "score": 1.0,
+      "score": 0.25,
       "n": 16
     },
     "sentiment": {
       "metric": "accuracy",
-      "score": 0.0,
+      "score": 0.333333,
       "n": 18
     },
     "translation": {
       "metric": "chrF",
-      "score": 0.0,
+      "score": 8.191509,
       "n": 18
     },
     "instruction_following": {

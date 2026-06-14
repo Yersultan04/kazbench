@@ -33,6 +33,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
+# Maximum result file size (bytes) — guard against malicious/corrupt large files
+MAX_RESULT_FILE_BYTES: int = 1 * 1024 * 1024  # 1 MB
+
 # ── Resolve paths ──────────────────────────────────────────────────────────────
 
 # When running as HF Space or locally, repo root is one level up from this file.
@@ -86,6 +89,16 @@ def load_results() -> list[dict[str, Any]]:
         return rows
 
     for path in sorted(RESULTS_DIR.glob("*.json")):
+        # Guard against huge/malicious files before parsing
+        try:
+            if path.stat().st_size > MAX_RESULT_FILE_BYTES:
+                print(
+                    f"[WARN] Skipping {path} — exceeds {MAX_RESULT_FILE_BYTES} byte limit.",
+                    file=sys.stderr,
+                )
+                continue
+        except OSError:
+            pass
         try:
             with path.open(encoding="utf-8") as fh:
                 data: dict[str, Any] = json.load(fh)
@@ -193,7 +206,7 @@ Ranks LLM models on **Kazakh-language** AI tasks.
         )
 
         refresh_btn = gr.Button("Refresh")
-        refresh_btn.click(fn=lambda: (load_results(), None)[0], outputs=lb_table)
+        refresh_btn.click(fn=refresh_table, outputs=lb_table)
 
         gr.Markdown(
             "*KazBench — the standard benchmark for Kazakh-language AI. "
@@ -208,6 +221,13 @@ Ranks LLM models on **Kazakh-language** AI tasks.
 
 if __name__ == "__main__":
     app = make_app()
-    # HF Spaces expects the app to launch on 0.0.0.0:7860 by default.
+    # NOTE: 0.0.0.0 binding is intentional for Hugging Face Spaces only.
+    # Do NOT expose this publicly without authentication in other environments.
+    # Pin gradio to a specific version in requirements: gradio==4.44.1
     port = int(os.environ.get("PORT", 7860))
-    app.launch(server_name="0.0.0.0", server_port=port)
+    app.launch(
+        server_name="0.0.0.0",
+        server_port=port,
+        # Restrict file serving to the results directory only
+        allowed_paths=[str(RESULTS_DIR)],
+    )

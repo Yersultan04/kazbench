@@ -13,10 +13,20 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 from typing import Any
+
+# Maximum result file size (bytes) — guard against malicious/corrupt large files
+MAX_RESULT_FILE_BYTES: int = 1 * 1024 * 1024  # 1 MB
+
+# Characters that break Markdown table syntax and must be escaped in untrusted fields
+_MD_ESCAPE_RE = None  # compiled lazily below
+
+
+def _md_escape(value: str) -> str:
+    """Escape pipe, bracket characters in untrusted strings for Markdown safety."""
+    return value.replace("|", r"\|").replace("[", r"\[").replace("]", r"\]")
 
 # Canonical task order for leaderboard columns
 TASK_ORDER: list[str] = [
@@ -45,6 +55,19 @@ SCALE_X100: set[str] = {"accuracy", "judge"}
 
 def load_result(path: Path) -> dict[str, Any] | None:
     """Load and lightly validate a single results JSON. Returns None on error."""
+    # Guard against huge/malicious files before parsing
+    try:
+        file_size = path.stat().st_size
+    except OSError:
+        file_size = 0
+    if file_size > MAX_RESULT_FILE_BYTES:
+        print(
+            f"[WARN] Skipping {path} — file size {file_size} bytes exceeds "
+            f"{MAX_RESULT_FILE_BYTES} byte limit.",
+            file=sys.stderr,
+        )
+        return None
+
     try:
         with path.open(encoding="utf-8") as fh:
             data: dict[str, Any] = json.load(fh)
@@ -97,15 +120,15 @@ def build_row(data: dict[str, Any]) -> dict[str, str]:
         if task in tasks:
             task_scores[task] = task_display_score(tasks[task])
         else:
-            task_scores[task] = "—"
+            task_scores[task] = "n/a"
 
     return {
-        "model": model,
-        "adapter": adapter,
-        "split": split,
+        "model": _md_escape(model),
+        "adapter": _md_escape(adapter),
+        "split": _md_escape(split),
         "overall": overall,
         "overall_str": f"{overall:.2f}",
-        "version": version,
+        "version": _md_escape(version),
         "task_scores": task_scores,  # type: ignore[dict-item]
     }
 

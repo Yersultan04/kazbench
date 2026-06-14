@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import re
 import sys
 import warnings
@@ -22,6 +23,17 @@ from typing import Any
 from harness import __version__
 from harness.metrics import accuracy, chrf_sentence, judge_score
 from harness.models import BaseModel, build_model
+
+logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Security constants
+# ---------------------------------------------------------------------------
+
+_ALLOWED_SPLITS: set[str] = {"dev", "test"}
+
+# Maximum size (bytes) for a single results JSON loaded by tooling
+MAX_RESULT_FILE_BYTES: int = 1 * 1024 * 1024  # 1 MB
 
 # ---------------------------------------------------------------------------
 # Task names (must match schema.md)
@@ -44,7 +56,7 @@ CHRF_TASKS = {"translation"}
 JUDGE_TASKS = {"instruction_following"}
 
 # ---------------------------------------------------------------------------
-# Prompt builders
+# Prompt builders -- ALL prompts are Cyrillic Kazakh
 # ---------------------------------------------------------------------------
 
 def _choices_block(choices: list[str]) -> str:
@@ -54,34 +66,44 @@ def _choices_block(choices: list[str]) -> str:
 
 def build_prompt_knowledge_mc(item: dict) -> str:
     return (
-        f"Сурак: {item['question']}\n\n"
+        f"Сұрақ: {item['question']}\n\n"
         f"{_choices_block(item['choices'])}\n\n"
-        "Жауап нomerini gana jazyn (0, 1, 2, ...): "
+        "Жауап нөмірін "
+        "жазыңыз (0, 1, 2, ...): "
     )
 
 
 def build_prompt_reading_comprehension(item: dict) -> str:
     return (
-        f"Matin:\n{item['passage']}\n\n"
-        f"Sural: {item['question']}\n\n"
+        f"Мәтін:\n{item['passage']}\n\n"
+        f"Сұрақ: {item['question']}\n\n"
         f"{_choices_block(item['choices'])}\n\n"
-        "Jawap nomerin jazyn (0, 1, 2, ...): "
+        "Жауап нөмірін "
+        "жазыңыз (0, 1, 2, ...): "
     )
 
 
 def build_prompt_grammar_morphology(item: dict) -> str:
     return (
-        f"Grammatika suraky: {item['question']}\n\n"
+        f"Грамматика "
+        f"сұрақы: {item['question']}\n\n"
         f"{_choices_block(item['choices'])}\n\n"
-        "Jawap nomerin jazyn (0, 1, 2, ...): "
+        "Жауап нөмірін "
+        "жазыңыз (0, 1, 2, ...): "
     )
 
 
 def build_prompt_sentiment(item: dict) -> str:
     return (
-        f"Kelesi matinnin sezimdi anyktay: '{item['text']}'\n\n"
-        "Zhauyp: 'on' (ijobaly), 'teris' (terisshi) nemese 'beitarap' "
-        "(beyjaiy) dep jazyn. Tek bir soz gana."
+        f"Келесі мәтіннің "
+        f"сезімін анықта: "
+        f"'{item['text']}'\n\n"
+        "Жауап: 'ң' (ижобалы), "
+        "'теріс' (терісшіл) "
+        "немесе 'бейтарап' "
+        "(бейтарап) деп "
+        "жазыңыз. Тек бір "
+        "сөз ғана."
     )
 
 
@@ -90,9 +112,13 @@ def build_prompt_translation(item: dict) -> str:
     tgt = item["target_lang"]
     text = item["source_text"]
     return (
-        f"Kelesi matindi {src} tilinen {tgt} tiline audar:\n\n"
+        f"Келесі мәтінді "
+        f"{src} тілінен {tgt} "
+        f"тіліне аудар:\n\n"
         f"{text}\n\n"
-        "Tek audarmany jazyn, baska narsesin kospa."
+        "Тек аударманы "
+        "жазыңыз, басқа "
+        "нәрсесін қоспа."
     )
 
 
@@ -104,26 +130,22 @@ def build_prompt_instruction_following(item: dict) -> str:
 # Answer parsers
 # ---------------------------------------------------------------------------
 
-_DIGIT_RE = re.compile(r"\b(\d)\b")
+# Match full integers (including multi-digit) at a word boundary
+_INT_RE = re.compile(r"\b(\d+)\b")
 
 
 def parse_mc(response: str, num_choices: int) -> int:
     """
     Parse a multiple-choice answer from the model response.
 
-    Tries to find the first standalone digit in [0, num_choices-1].
+    Tries to find the first standalone integer in [0, num_choices-1].
+    Handles 2-digit+ choice indices (e.g. index 10, 11, ...).
     Falls back to -1 (no valid answer) if nothing matches.
     """
-    for m in _DIGIT_RE.finditer(response.strip()):
+    for m in _INT_RE.finditer(response.strip()):
         digit = int(m.group(1))
         if 0 <= digit < num_choices:
             return digit
-    # Second pass: any digit at all
-    digits = re.findall(r"\d", response)
-    if digits:
-        d = int(digits[0])
-        if 0 <= d < num_choices:
-            return d
     return -1  # unparseable -> wrong
 
 
@@ -144,15 +166,15 @@ _SENTIMENT_MAP = {
 
 # Map Cyrillic Kazakh labels to our ASCII internal keys
 _CYRILLIC_SENTIMENT = {
-    "өң": "on",         # 'он' / positive variant; but label is оң
-    "оң": "on",         # оң
+    "ң":           "on",        # оң (short form)
+    "оң":     "on",        # оң
     "теріс": "teris",    # теріс
     "бейтарап": "beitarap",  # бейтарап
 }
 
 # The gold labels in schema.md are Cyrillic: оң / теріс / бейтарап
 _GOLD_LABEL_TO_INTERNAL = {
-    "оң": "on",         # оң
+    "оң":     "on",        # оң
     "теріс": "teris",
     "бейтарап": "beitarap",
 }
@@ -217,7 +239,7 @@ def evaluate_task(
         for item in items:
             if task_name == "sentiment":
                 prompt = build_prompt_sentiment(item)
-                response = model.generate(prompt)
+                response = model.generate(prompt, task=task_name)
                 preds.append(parse_sentiment(response))
                 golds.append(gold_sentiment(item["label"]))
             else:
@@ -227,7 +249,7 @@ def evaluate_task(
                     prompt = build_prompt_reading_comprehension(item)
                 else:  # grammar_morphology
                     prompt = build_prompt_grammar_morphology(item)
-                response = model.generate(prompt)
+                response = model.generate(prompt, task=task_name)
                 preds.append(parse_mc(response, len(item["choices"])))
                 golds.append(item["answer"])
 
@@ -238,7 +260,7 @@ def evaluate_task(
         scores: list[float] = []
         for item in items:
             prompt = build_prompt_translation(item)
-            hypothesis = model.generate(prompt)
+            hypothesis = model.generate(prompt, task=task_name)
             s = chrf_sentence(hypothesis, item["reference"])
             scores.append(s)
         avg = sum(scores) / len(scores) if scores else 0.0
@@ -248,7 +270,7 @@ def evaluate_task(
         raw_scores: list[float] = []
         for item in items:
             prompt = build_prompt_instruction_following(item)
-            response = model.generate(prompt)
+            response = model.generate(prompt, task=task_name)
             s = judge_score(response, item["rubric"], model)
             raw_scores.append(s)
         avg = sum(raw_scores) / len(raw_scores) if raw_scores else 0.0
@@ -294,7 +316,8 @@ def write_results(
     task_results: dict[str, dict],
 ) -> None:
     """Write results JSON in the schema.md format."""
-    out_path.parent.mkdir(parents=True, exist_ok=True)
+    # Create only the immediate parent directory (no deep auto-create)
+    out_path.parent.mkdir(exist_ok=True)
     payload = {
         "model": model_label,
         "adapter": adapter_name,
@@ -336,7 +359,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--split",
         default="dev",
-        help="Dataset split to evaluate (default: dev).",
+        help="Dataset split to evaluate (default: dev). Must be 'dev' or 'test'.",
     )
     parser.add_argument(
         "--tasks",
@@ -361,10 +384,23 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
 
-    # Resolve data root
+    # --- Security: validate --split against allowlist ---
+    if args.split not in _ALLOWED_SPLITS:
+        print(
+            f"[kazbench] ERROR: --split must be one of {sorted(_ALLOWED_SPLITS)}, "
+            f"got '{args.split}'."
+        )
+        return 1
+
+    # The --split allowlist above already blocks path-traversal via the split name.
+    # --out / --data-dir are caller-controlled by design (this is a CLI the user runs
+    # themselves); restricting them to the repo root breaks legitimate use such as writing
+    # results to a temp dir. CI pipelines, not the CLI, vet PR-supplied arguments.
     harness_pkg_dir = Path(__file__).parent
-    repo_root = harness_pkg_dir.parent
-    data_root = Path(args.data_dir) if args.data_dir else repo_root
+    repo_root = harness_pkg_dir.parent.resolve()
+
+    data_root = Path(args.data_dir).resolve() if args.data_dir else repo_root
+    out_path = Path(args.out).resolve()
 
     split_dir = data_root / "benchmark" / args.split
 
@@ -373,7 +409,8 @@ def main(argv: list[str] | None = None) -> int:
     model = build_model(args.model, args.model_id)
     model_label = args.model_id or args.model
 
-    # Determine tasks
+    # Determine tasks and whether they were explicitly requested
+    explicitly_requested = args.tasks is not None
     tasks_to_run = args.tasks if args.tasks else ALL_TASKS
 
     task_results: dict[str, dict] = {}
@@ -381,11 +418,20 @@ def main(argv: list[str] | None = None) -> int:
     for task_name in tasks_to_run:
         task_file = split_dir / f"{task_name}.jsonl"
         if not task_file.exists():
-            print(
-                f"[kazbench] WARNING: {task_file} not found -- skipping "
-                f"(data agent may not have written it yet)."
-            )
-            continue
+            if explicitly_requested:
+                # Hard-fail: user explicitly asked for this task
+                print(
+                    f"[kazbench] ERROR: requested task '{task_name}' data file not found: "
+                    f"{task_file}"
+                )
+                return 1
+            else:
+                # Warn-only when running the default full set
+                print(
+                    f"[kazbench] WARNING: {task_file} not found -- skipping "
+                    f"(data agent may not have written it yet)."
+                )
+                continue
 
         # Load items
         items: list[dict] = []
@@ -415,7 +461,6 @@ def main(argv: list[str] | None = None) -> int:
         task_results[task_name] = result
 
     # Write output
-    out_path = Path(args.out)
     write_results(out_path, model_label, args.model, args.split, task_results)
 
     overall = _overall_score(task_results)

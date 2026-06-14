@@ -2,7 +2,7 @@
 Model adapters for KazBench.
 
 Each adapter exposes a single method:
-    generate(prompt: str) -> str
+    generate(prompt: str, task: str | None = None) -> str
 
 Factory:
     build_model(name: str, model_id: str | None = None) -> BaseModel
@@ -23,17 +23,20 @@ class BaseModel(ABC):
     """Abstract base for all KazBench model adapters."""
 
     @abstractmethod
-    def generate(self, prompt: str) -> str:
-        """Generate a response string for the given prompt."""
+    def generate(self, prompt: str, task: Optional[str] = None) -> str:
+        """Generate a response string for the given prompt.
+
+        Args:
+            prompt: The input prompt string.
+            task:   Optional task name (e.g. 'translation', 'sentiment').
+                    Real model adapters ignore this; DummyModel uses it to
+                    return deterministic stub responses without keyword sniffing.
+        """
 
 
 # ---------------------------------------------------------------------------
 # DummyModel
 # ---------------------------------------------------------------------------
-
-_DUMMY_CHOICE_PATTERN = r"(\d)"
-_DUMMY_SENTIMENT_LABELS = ("ong", "teris", "beitarap")  # ascii placeholders used internally
-
 
 class DummyModel(BaseModel):
     """
@@ -42,7 +45,7 @@ class DummyModel(BaseModel):
     Behaviour (designed so the harness can be validated end-to-end without
     any network access):
     - Multiple-choice tasks     -> returns "0" (always picks choice 0)
-    - Sentiment classification  -> returns "on" (always predicts positive)
+    - Sentiment classification  -> returns a Cyrillic positive label
     - Translation               -> returns a short ASCII stub sentence so
                                    chrF can be computed (non-zero but low)
     - Instruction-following     -> returns a one-sentence stub response
@@ -51,20 +54,21 @@ class DummyModel(BaseModel):
     # Used by run_eval to detect DummyModel and skip real LLM-judge
     IS_DUMMY: bool = True
 
-    def generate(self, prompt: str) -> str:  # noqa: D401
-        """Return a deterministic stub response."""
-        p = prompt.lower()
-        # Translation tasks ask to "translate" something
-        if "аудар" in p or "translate" in p or "translation" in p:
+    def generate(self, prompt: str, task: Optional[str] = None) -> str:  # noqa: D401
+        """Return a deterministic stub response based on the explicit task name.
+
+        When *task* is provided the response is chosen deterministically by task
+        name -- no fragile keyword scanning needed.  The prompt parameter is
+        accepted for API compatibility but is not inspected.
+        """
+        if task == "translation":
             return "This is a stub translation output for harness testing."
-        # Instruction-following tasks contain "rubric" or explicit instructions
-        if "нускама" in p or "instruction" in p or "rubric" in p or "тапсырма" in p:
+        if task == "instruction_following":
             return "This is a stub instruction-following response."
-        # Sentiment tasks ask to classify
-        if "сезим" in p or "sentiment" in p or "пiкiр" in p or "кокейтесті" in p:
-            # Return the positive Kazakh label so accuracy is 0 when gold is negative/neutral
-            return "on"
-        # Default: MC answer
+        if task == "sentiment":
+            # Return the Cyrillic positive label so parse_sentiment can match it
+            return "оң"  # Kazakh Cyrillic for "on" (positive)
+        # Default: MC answer (knowledge_mc, reading_comprehension, grammar_morphology)
         return "0"
 
 
@@ -112,7 +116,7 @@ class ClaudeModel(BaseModel):
             self._client = anthropic.Anthropic(api_key=api_key)
         return self._client
 
-    def generate(self, prompt: str) -> str:
+    def generate(self, prompt: str, task: Optional[str] = None) -> str:
         """Call the Anthropic Messages API and return the response text."""
         client = self._get_client()
         message = client.messages.create(
@@ -167,7 +171,7 @@ class OpenAICompatModel(BaseModel):
             self._client = openai.OpenAI(**kwargs)
         return self._client
 
-    def generate(self, prompt: str) -> str:
+    def generate(self, prompt: str, task: Optional[str] = None) -> str:
         """Call the OpenAI-compatible chat completion endpoint."""
         client = self._get_client()
         response = client.chat.completions.create(

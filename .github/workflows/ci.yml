@@ -3,8 +3,26 @@ name: CI
 on:
   push:
     branches: ["**"]
+    paths:
+      - "harness/**"
+      - "tools/**"
+      - "tests/**"
+      - "benchmark/**"
+      - "leaderboard/**"
+      - "requirements.txt"
+      - "Dockerfile"
+      - ".github/workflows/ci.yml"
   pull_request:
     branches: ["**"]
+    paths:
+      - "harness/**"
+      - "tools/**"
+      - "tests/**"
+      - "benchmark/**"
+      - "leaderboard/**"
+      - "requirements.txt"
+      - "Dockerfile"
+      - ".github/workflows/ci.yml"
 
 jobs:
   # -----------------------------------------------------------------------
@@ -13,6 +31,7 @@ jobs:
   test:
     name: Test (Python 3.11, ubuntu-latest)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -44,6 +63,7 @@ jobs:
   schema-canary:
     name: Schema and canary sanity
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -64,7 +84,7 @@ jobs:
       - name: Verify dummy result JSON structure
         run: |
           python - <<'EOF'
-          import json, sys
+          import json, sys, subprocess, pathlib
 
           REQUIRED_TASKS = [
               "knowledge_mc",
@@ -76,12 +96,11 @@ jobs:
           ]
 
           # Re-run eval to get a fresh result
-          import subprocess, pathlib
           result = subprocess.run(
               [sys.executable, "-m", "harness.run_eval",
                "--model", "dummy", "--split", "dev",
                "--out", "results/ci-canary.json"],
-              capture_output=True, text=True
+              capture_output=True, text=True, timeout=300
           )
           if result.returncode != 0:
               print("STDOUT:", result.stdout)

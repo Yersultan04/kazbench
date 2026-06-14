@@ -147,10 +147,12 @@ def validate_tasks(data: dict[str, Any], rep: Reporter) -> None:
         # Already reported in validate_top_level
         return
 
-    # Check all 6 tasks are present
+    # All 6 tasks are required for official leaderboard inclusion.
+    # run_eval --tasks can produce a subset for local testing, but such
+    # partial results will be rejected here and must not be submitted.
     for task in ALL_TASKS:
         if task not in tasks:
-            rep.error(f"Missing task: '{task}'. All 6 tasks are required.")
+            rep.error(f"Missing task: '{task}'. All 6 tasks are required for leaderboard submission.")
 
     for task_name, task_data in tasks.items():
         prefix = f"tasks.{task_name}"
@@ -276,6 +278,20 @@ def main() -> int:
     # File existence
     if not path.exists():
         print(f"[ERROR] File not found: {path}")
+        return 1
+
+    # Guard against huge/malicious files before parsing (1 MB limit)
+    _MAX_BYTES = 1 * 1024 * 1024
+    try:
+        file_size = path.stat().st_size
+        if file_size > _MAX_BYTES:
+            print(
+                f"[ERROR] File size {file_size} bytes exceeds the {_MAX_BYTES} byte "
+                "limit. Submission files must be under 1 MB."
+            )
+            return 1
+    except OSError as exc:
+        print(f"[ERROR] Cannot stat file: {exc}")
         return 1
 
     # JSON parse

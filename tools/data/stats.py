@@ -50,6 +50,7 @@ def main(argv: list[str]) -> int:
     per_task_validated: Counter[str] = Counter()
     per_task_canary: Counter[str] = Counter()
     per_task_source: dict[str, Counter[str]] = defaultdict(Counter)
+    per_task_answer_idx: dict[str, Counter[int]] = defaultdict(Counter)
     source_total: Counter[str] = Counter()
     bad_lines = 0
 
@@ -80,6 +81,8 @@ def main(argv: list[str]) -> int:
                 per_task_canary[task] += 1
             per_task_source[task][source] += 1
             source_total[source] += 1
+            if isinstance(item.get("answer"), int) and not isinstance(item.get("answer"), bool):
+                per_task_answer_idx[task][item["answer"]] += 1
 
     total = sum(per_task_total.values())
 
@@ -119,6 +122,27 @@ def main(argv: list[str]) -> int:
             f"{src}={cnt}" for src, cnt in sorted(per_task_source[task].items())
         )
         print(f"  {task:24s} {parts}")
+
+    # Answer-index distribution for multiple-choice tasks: a heavily skewed
+    # correct-answer position is trivially gameable and signals positional bias.
+    mc_tasks = [t for t in (known + extra) if per_task_answer_idx.get(t)]
+    if mc_tasks:
+        print()
+        print("answer-index distribution (MC tasks):")
+        skew_warnings: list[str] = []
+        for task in mc_tasks:
+            dist = per_task_answer_idx[task]
+            n = sum(dist.values())
+            parts = ", ".join(f"{idx}={cnt}" for idx, cnt in sorted(dist.items()))
+            print(f"  {task:24s} {parts}")
+            top_idx, top_cnt = dist.most_common(1)[0]
+            if n and top_cnt / n > 0.60:
+                skew_warnings.append(
+                    f"  WARNING: {task} is skewed - index {top_idx} holds "
+                    f"{100.0 * top_cnt / n:.0f}% of answers (>60%)."
+                )
+        for w in skew_warnings:
+            print(w)
 
     return 0
 
