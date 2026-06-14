@@ -16,3 +16,35 @@
 {"id": "trn_000016", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Бұл менің анам.", "reference": "Это моя мама."}
 {"id": "trn_000017", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Қазір сағат неше?", "reference": "What time is it now?"}
 {"id": "trn_000018", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Дүкен қай жерде?", "reference": "Где находится магазин?", "canary": "KAZBENCH-CANARY-TRN-6a3c8f1b-do-not-train"}
+{"id": "trn_000019", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Қайырлы таң!", "reference": "Good morning!"}
+{"id": "trn_000020", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Сау болыңыз!", "reference": "Goodbye!"}
+{"id": "trn_000021", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Мен студентпін.", "reference": "I am a student."}
+{"id": "trn_000022", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Бұл менің үйім.", "reference": "This is my house."}
+{"id": "trn_000023", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Ол кітап оқып отыр.", "reference": "He is reading a book."}
+{"id": "trn_000024", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Бүгін жексенбі.", "reference": "Today is Sunday."}
+{"id": "trn_000025", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Маған су керек.", "reference": "I need water."}
+{"id": "trn_000026", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Біз досбыз.", "reference": "We are friends."}
+{"id": "trn_000027", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Менің анам мұғалім.", "reference": "My mother is a teacher."}
+{"id": "trn_000028", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Сен қайда тұрасың?", "reference": "Where do you live?"}
+{"id": "trn_000029", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Кешіріңіз.", "reference": "Excuse me."}
+{"id": "trn_000030", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Ауа райы бүгін жақсы.", "reference": "The weather is good today."}
+{"id": "trn_000031", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Мен қазақ тілін үйреніп жүрмін.", "reference": "I am learning the Kazakh language."}
+{"id": "trn_000032", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Бұл кітап қызық.", "reference": "This book is interesting."}
+{"id": "trn_000033", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Ол мектепке барады.", "reference": "She goes to school."}
+{"id": "trn_000034", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "en", "source_text": "Менің атым Дана.", "reference": "My name is Dana."}
+{"id": "trn_000035", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Қайырлы таң!", "reference": "Доброе утро!"}
+{"id": "trn_000036", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Сау болыңыз!", "reference": "До свидания!"}
+{"id": "trn_000037", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Мен студентпін.", "reference": "Я студент."}
+{"id": "trn_000038", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Бұл менің үйім.", "reference": "Это мой дом."}
+{"id": "trn_000039", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Ол кітап оқып отыр.", "reference": "Он читает книгу."}
+{"id": "trn_000040", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Бүгін жексенбі.", "reference": "Сегодня воскресенье."}
+{"id": "trn_000041", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Маған су керек.", "reference": "Мне нужна вода."}
+{"id": "trn_000042", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Біз досбыз.", "reference": "Мы друзья."}
+{"id": "trn_000043", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Менің әкем дәрігер.", "reference": "Мой отец врач."}
+{"id": "trn_000044", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Сен қайда тұрасың?", "reference": "Где ты живёшь?"}
+{"id": "trn_000045", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Кешіріңіз.", "reference": "Извините."}
+{"id": "trn_000046", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Ауа райы бүгін жақсы.", "reference": "Сегодня хорошая погода."}
+{"id": "trn_000047", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Мен қазақ тілін үйреніп жүрмін.", "reference": "Я учу казахский язык."}
+{"id": "trn_000048", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Бұл кітап қызық.", "reference": "Эта книга интересная."}
+{"id": "trn_000049", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Ол мектепке барады.", "reference": "Она ходит в школу."}
+{"id": "trn_000050", "task": "translation", "source": "seed", "validated": false, "source_lang": "kk", "target_lang": "ru", "source_text": "Менің атым Дана.", "reference": "Меня зовут Дана."}

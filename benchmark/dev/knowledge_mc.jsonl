@@ -16,3 +16,35 @@
 {"id": "kmc_000016", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның мемлекеттік тілі қай тіл?", "choices": ["Орыс тілі", "Ағылшын тілі", "Түрік тілі", "Қазақ тілі"], "answer": 3}
 {"id": "kmc_000017", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Бесік нені білдіреді?", "choices": ["Нәресте ұйықтайтын төсек", "Ас үй", "Көлік", "Құрал"], "answer": 0}
 {"id": "kmc_000018", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Бір аптада неше күн бар?", "choices": ["Бес", "Жеті", "Алты", "Сегіз"], "answer": 1, "canary": "KAZBENCH-CANARY-KMC-7f3a9c1e-do-not-train"}
+{"id": "kmc_000019", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның ең биік шыңы қалай аталады?", "choices": ["Хан Тәңірі", "Белуха", "Эльбрус", "Қазбек"], "answer": 0}
+{"id": "kmc_000020", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Жылдың бірінші айы қалай аталады?", "choices": ["Ақпан", "Қаңтар", "Наурыз", "Желтоқсан"], "answer": 1}
+{"id": "kmc_000021", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "«Бес» санынан кейін қай сан келеді?", "choices": ["Төрт", "Жеті", "Алты", "Сегіз"], "answer": 2}
+{"id": "kmc_000022", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақ тілінде «су» сөзі нені білдіреді?", "choices": ["Тас", "Ағаш", "От", "Сұйықтық (ішетін)"], "answer": 3}
+{"id": "kmc_000023", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Түйе қандай жануар?", "choices": ["Үй жануары", "Балық", "Құс", "Жәндік"], "answer": 0}
+{"id": "kmc_000024", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Аспанда күндіз нені көреміз?", "choices": ["Ай", "Күн", "Жұлдыз", "Шам"], "answer": 1}
+{"id": "kmc_000025", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақ тілінде «ақ» түсі орысша қалай аталады?", "choices": ["чёрный", "красный", "белый", "синий"], "answer": 2}
+{"id": "kmc_000026", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Адамның бір қолында неше саусақ бар?", "choices": ["Үш", "Төрт", "Алты", "Бес"], "answer": 3}
+{"id": "kmc_000027", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Балық қайда тіршілік етеді?", "choices": ["Суда", "Аспанда", "Шөлде", "Тауда"], "answer": 0}
+{"id": "kmc_000028", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қыс мезгілінде ауа райы қандай болады?", "choices": ["Ыстық", "Суық", "Жаңбырлы әрі жылы", "Қапырық"], "answer": 1}
+{"id": "kmc_000029", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "«Кітап» нені білдіреді?", "choices": ["Тамақ", "Көлік", "Оқитын зат", "Киім"], "answer": 2}
+{"id": "kmc_000030", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның ту-жалауында қандай құс бейнеленген?", "choices": ["Қарға", "Тауық", "Үйрек", "Бүркіт"], "answer": 3}
+{"id": "kmc_000031", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Наурыз мейрамында дайындалатын дәстүрлі тағам қалай аталады?", "choices": ["Наурыз көже", "Палау", "Бешбармақ", "Манты"], "answer": 0}
+{"id": "kmc_000032", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Бір жылда неше ай бар?", "choices": ["Он", "Он екі", "Он бір", "Он үш"], "answer": 1}
+{"id": "kmc_000033", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Жаңбыр қай мезгілде көбірек жауады?", "choices": ["Қыста", "Жазда", "Көктемде", "Ешқашан"], "answer": 2}
+{"id": "kmc_000034", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "«Нан» нені білдіреді?", "choices": ["Сусын", "Киім", "Аспап", "Жейтін тағам"], "answer": 3}
+{"id": "kmc_000035", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Адам несімен көреді?", "choices": ["Көзімен", "Құлағымен", "Мұрнымен", "Қолымен"], "answer": 0}
+{"id": "kmc_000036", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның ең үлкен қаласы қайсы?", "choices": ["Тараз", "Алматы", "Атырау", "Орал"], "answer": 1}
+{"id": "kmc_000037", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "«Үш» санынан кейін қай сан келеді?", "choices": ["Екі", "Бес", "Төрт", "Алты"], "answer": 2}
+{"id": "kmc_000038", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Сиыр бізге не береді?", "choices": ["Жүн", "Бал", "Жұмыртқа", "Сүт"], "answer": 3}
+{"id": "kmc_000039", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Жаз мезгілінде ауа райы қандай болады?", "choices": ["Ыстық", "Қарлы", "Аязды", "Мұздай"], "answer": 0}
+{"id": "kmc_000040", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақ тілінде «көк» сөзі қай түсті білдіреді?", "choices": ["Қызыл", "Көк (көгілдір)", "Сары", "Қара"], "answer": 1}
+{"id": "kmc_000041", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Адам несімен естиді?", "choices": ["Көзімен", "Мұрнымен", "Құлағымен", "Аяғымен"], "answer": 2}
+{"id": "kmc_000042", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Аптаның соңғы күні қалай аталады?", "choices": ["Дүйсенбі", "Сейсенбі", "Жұма", "Жексенбі"], "answer": 3}
+{"id": "kmc_000043", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Жұлдыздарды қашан көреміз?", "choices": ["Түнде", "Таңертең", "Түсте", "Күндіз"], "answer": 0}
+{"id": "kmc_000044", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "«Ат» (жылқы) қандай жануар?", "choices": ["Жыртқыш", "Үй жануары", "Балық", "Құс"], "answer": 1}
+{"id": "kmc_000045", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақ тілінде «екі» саны қай санды білдіреді?", "choices": ["1", "3", "2", "4"], "answer": 2}
+{"id": "kmc_000046", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Шай әдетте немен ішіледі?", "choices": ["Тұзбен", "Майымен", "Қиярмен", "Қантпен"], "answer": 3}
+{"id": "kmc_000047", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қой бізге қандай өнім береді?", "choices": ["Жүн", "Бал", "Жұмыртқа", "Балық"], "answer": 0}
+{"id": "kmc_000048", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Күн батқаннан кейін не болады?", "choices": ["Таң", "Түн", "Түс", "Көктем"], "answer": 1}
+{"id": "kmc_000049", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "«Гүл» қайда өседі?", "choices": ["Суда жүзеді", "Аспанда ұшады", "Жерде (бақшада)", "Үй ішінде ұшады"], "answer": 2}
+{"id": "kmc_000050", "task": "knowledge_mc", "source": "seed", "validated": false, "question": "Қазақстанның мемлекеттік рәміздеріне не жатады?", "choices": ["Тек ту", "Тек елтаңба", "Тек әнұран", "Ту, елтаңба, әнұран"], "answer": 3}
