@@ -269,15 +269,25 @@ The leaderboard is a Gradio app (`leaderboard/app.py`) hosted on Hugging Face Sp
 
 ### 6.1 Current Status
 
-**All model results in this section are preliminary and should not be interpreted as reliable capability estimates.**
+**All model results in this section are preliminary and run on the unvalidated DEV seed (≈50 items/task). They should not be cited as reliable capability estimates until native validation is complete.**
 
-At the time of writing, only the offline dummy baseline has been run through the harness. The purpose of this baseline is to confirm that the evaluation pipeline runs correctly end-to-end, not to characterize model performance.
+We report an offline `dummy` baseline (harness verification) and two real open-weight models served via a Groq-hosted OpenAI-compatible endpoint: `meta-llama/llama-4-scout-17b-16e-instruct` and `llama-3.1-8b-instant`. Two further council models (`qwen3-32b`, `llama-3.3-70b-versatile`) were attempted but hit free-tier daily token limits; they will be added when quota refreshes.
 
-Real model baselines (frontier closed-source models and available open-source multilingual models) are planned once:
+**Provisional DEV leaderboard:**
 
-1. The DEV dataset reaches at least 50 validated items per task.
-2. Native-speaker reviewers confirm item correctness.
-3. Sufficient API budget is allocated for multi-model runs.
+| Rank | Model | Overall | KMC | RC | GM | Sent | Trans (chrF) | IF |
+|---|---|---|---|---|---|---|---|---|
+| 1 | llama-4-scout-17b | **87.53** | 96.0 | 87.5 | 87.5 | 100.0 | 92.1 | 62.0 |
+| 2 | llama-3.1-8b-instant | **64.94** | 72.0 | 95.8 | 77.1 | 60.8 | 26.4 | 57.6 |
+| 3 | dummy (floor) | 23.22 | 27.8 | 25.0 | 25.0 | 33.3 | 8.2 | 20.0 |
+
+Even on the small seed, the benchmark **discriminates clearly** (real models 65–88 vs. a 23 floor) and surfaces where Kazakh is hard: translation capability differs almost 4× between the two models (chrF 92.1 vs 26.4), and **both** fall to ≈60% on instruction-following — following instructions *in Kazakh* is hard even for the stronger model.
+
+### 6.1b Methodology validation: the evaluation caught its own bug
+
+A multi-model **triage** pass (each model's per-item correctness compared against the gold answer) flagged a cluster of obviously-positive sentiment items that *every* model failed. Investigation traced this to a corrupted prompt template instructing models to answer the positive class with a nonsense token instead of "оң", which the parser then scored as wrong — silently depressing every model's sentiment score. After the one-line fix, the stronger model's sentiment rose from 66.7% to 100% and triage-flagged items fell from 22 to 1 (the remaining one a genuinely hard accusative-case morphology question, not a data error). We report this not as an embarrassment but as evidence that the protocol — adversarial cross-model triage with a native-speaker authority backstop — detects scoring errors *before* numbers are published.
+
+Native-speaker validation of the seed (in progress) remains required before these numbers are treated as authoritative.
 
 ### 6.2 Dummy Baseline (Harness Verification Only)
 
@@ -293,7 +303,7 @@ The dummy adapter returns a fixed deterministic response per task type (index `"
 | instruction_following | judge (LLM) | 20.0% | 16 | Judge unavailable in dummy; returns 0.0 per item; value above reflects harness stub |
 | **Overall** | macro-avg | **25.79 / 100** | 102 | Harness verification only |
 
-The 100% accuracy on `grammar_morphology` is a data artifact: in the v0.1 seed, all correct answers happen to be at index 0. This will be corrected during validation by randomizing answer positions. Similarly, the dummy's 0.0 on sentiment and translation reflects the absence of any generation, not any model property.
+> Note: the table above reflects the *initial* v0.1 seed. The `grammar_morphology` 100% was a data artifact (all correct answers at index 0); answer positions have since been **randomized evenly** across choices, and the dummy now scores ≈25% on all MC tasks (see the leaderboard in §6.1, dummy overall 23.22). Sentiment/translation 0.0 reflects the dummy producing no real generation, not a model property.
 
 **These scores should not appear in any comparison table or marketing material.** They exist solely to confirm that the harness runs without errors.
 
@@ -313,15 +323,15 @@ We will report these results in a subsequent version of this paper and update th
 
 ### 7.1 Seed Data Size and Reliability
 
-The v0.1 dataset contains 16–18 items per task, all unvalidated. This is insufficient for statistically reliable capability differentiation between models. A difference of two items corresponds to a 12-percentage-point accuracy swing on a 16-item task. Results on the current seed should be treated as harness smoke-test outputs, not model capability measurements.
+The v0.1 dataset contains ≈50 items per task (296 total), all currently `validated: false`. This is enough to discriminate strong from weak models (§6.1) but still too small for statistically tight per-task estimates: a few items can swing a 50-item accuracy by several points, and we do not yet report confidence intervals. Results on the current seed should be treated as indicative, not authoritative, until native validation and further expansion (target 100–200 items/task) are complete.
 
 ### 7.2 Pending Native Validation
 
 Every item in the DEV split is currently `validated: false`. The items were generated with AI assistance and have not been reviewed by native Kazakh speakers. Grammatical errors, culturally inappropriate items, or items with ambiguous correct answers may be present. We flag this explicitly so that downstream users do not mistake seed data quality for validated benchmark quality.
 
-### 7.3 Script Inconsistency in Prompts
+### 7.3 Prompt Script (resolved)
 
-The v0.1 harness prompts use a phonemic Latin transliteration of Kazakh rather than standard Cyrillic Kazakh. This is inconsistent with the DEV data (which uses Cyrillic) and may disadvantage or advantage certain models depending on their tokenization. A full rewrite of prompts to standard Cyrillic is planned before any real-model results are reported.
+Early v0.1 harness prompts mixed Latin transliteration with Cyrillic, which was inconsistent with the Cyrillic DEV data. Prompts have since been rewritten to standard Cyrillic Kazakh, and an explicit per-task dispatch replaced fragile script-based keyword detection. The sentiment-prompt corruption described in §6.1b was a regression introduced during this rewrite and has been fixed.
 
 ### 7.4 Script Transition and Orthographic Variation
 
