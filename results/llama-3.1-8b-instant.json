@@ -1,0 +1,39 @@
+{
+  "model": "llama-3.1-8b-instant",
+  "adapter": "openai",
+  "kazbench_version": "0.1.0",
+  "split": "dev",
+  "overall": 64.943,
+  "tasks": {
+    "knowledge_mc": {
+      "metric": "accuracy",
+      "score": 0.72,
+      "n": 50
+    },
+    "reading_comprehension": {
+      "metric": "accuracy",
+      "score": 0.958333,
+      "n": 48
+    },
+    "grammar_morphology": {
+      "metric": "accuracy",
+      "score": 0.770833,
+      "n": 48
+    },
+    "sentiment": {
+      "metric": "accuracy",
+      "score": 0.607843,
+      "n": 51
+    },
+    "translation": {
+      "metric": "chrF",
+      "score": 26.405919,
+      "n": 50
+    },
+    "instruction_following": {
+      "metric": "judge",
+      "score": 0.57551,
+      "n": 49
+    }
+  }
+}

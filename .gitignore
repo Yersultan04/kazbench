@@ -8,5 +8,6 @@ venv/
 benchmark/test/
 
 # local model results are submitted via PR, not committed wholesale
-results/*.json
-!results/dummy.json
+
+# track baseline result JSONs (leaderboard data); ignore bulky per-item preds
+results/preds/
