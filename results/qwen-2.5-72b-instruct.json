@@ -1,0 +1,39 @@
+{
+  "model": "qwen/qwen-2.5-72b-instruct",
+  "adapter": "openai",
+  "kazbench_version": "0.1.0",
+  "split": "dev",
+  "overall": 74.5351,
+  "tasks": {
+    "knowledge_mc": {
+      "metric": "accuracy",
+      "score": 0.88,
+      "n": 50
+    },
+    "reading_comprehension": {
+      "metric": "accuracy",
+      "score": 0.979167,
+      "n": 48
+    },
+    "grammar_morphology": {
+      "metric": "accuracy",
+      "score": 0.75,
+      "n": 48
+    },
+    "sentiment": {
+      "metric": "accuracy",
+      "score": 0.843137,
+      "n": 51
+    },
+    "translation": {
+      "metric": "chrF",
+      "score": 79.83742,
+      "n": 50
+    },
+    "instruction_following": {
+      "metric": "judge",
+      "score": 0.221429,
+      "n": 49
+    }
+  }
+}

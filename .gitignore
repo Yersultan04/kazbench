@@ -14,3 +14,5 @@ results/preds/
 
 # HF publish staging (built artifacts, not source)
 build/
+benchmark/_dev_validated/
+_baseline_data/
