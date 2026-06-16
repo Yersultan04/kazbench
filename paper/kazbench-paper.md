@@ -1,6 +1,6 @@
 # KazBench: An Open Evaluation Benchmark for Large Language Models on the Kazakh Language
 
-**Draft v0.1 — Not for submission. For review and revision only.**
+**Draft v0.2 — Work in progress. Not for final submission.**
 
 *Submitted to: [TARGET VENUE — e.g., Workshop on Low-Resource Languages at ACL/EMNLP 2026, or similar]*
 
@@ -8,11 +8,16 @@ Authors: [AUTHOR LIST TBD]
 Affiliation: [AFFILIATION TBD]
 Contact: [EMAIL TBD]
 
+> **Published artifacts (2026-06-16):**
+> Code + harness: https://github.com/Yersultan04/kazbench (MIT)
+> Dataset (DEV split): https://huggingface.co/datasets/Yersultan03/kazbench (CC-BY-4.0)
+> Live leaderboard: https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard
+
 ---
 
 ## Abstract
 
-We introduce **KazBench**, an open benchmark for evaluating large language models (LLMs) on the Kazakh language — a Turkic language spoken by approximately 13 million people that remains severely under-represented in LLM evaluation literature. Despite growing community efforts in Kazakh NLP, no standardized, reproducible evaluation suite exists that enables direct, cross-model comparison across a broad set of language capabilities. KazBench fills this gap with six tasks covering factual knowledge, reading comprehension, morphological grammar, sentiment classification, translation (KK→EN and KK→RU), and open-ended instruction following. We release a model-agnostic evaluation harness, a public DEV split, a private TEST split for leaderboard integrity, and a decentralized submission protocol that scales without API costs to the project. A public leaderboard tracks model performance over time. Current data (v0.1 seed set) consists of 15–18 items per task; all items are marked `validated: false` pending native-speaker review. We report a dummy-model baseline overall score of **25.79/100**, which exists solely to verify harness correctness. Real model results are pending data validation and API evaluation runs. We release all code, data, and tooling under MIT (code) and CC BY 4.0 (data) licenses.
+We introduce **KazBench**, an open benchmark for evaluating large language models (LLMs) on the Kazakh language — a Turkic language spoken by approximately 13 million people that remains severely under-represented in LLM evaluation literature. Despite growing community efforts in Kazakh NLP, no standardized, reproducible evaluation suite exists that enables direct, cross-model comparison across a broad set of language capabilities. KazBench fills this gap with six tasks covering factual knowledge, reading comprehension, morphological grammar, sentiment classification, translation (KK→EN and KK→RU), and open-ended instruction following. We release a model-agnostic evaluation harness, a public DEV split, a private TEST split for leaderboard integrity, and a decentralized submission protocol that scales without API costs to the project. A public leaderboard tracks model performance over time. The current DEV split (v0.1.0) contains **296 items** (~49–51 per task), all native-validated by a fluent Kazakh-speaking reviewer. We report baselines on two open-weight models served via Groq: `meta-llama/llama-4-scout-17b-16e-instruct` (overall **87.53/100**) and `llama-3.1-8b-instant` (overall **64.94/100**), plus a dummy floor of **22.97/100** for harness verification. All code, data, and the live leaderboard are publicly available (see artifact links above). We release all artifacts under MIT (code) and CC BY 4.0 (data) licenses.
 
 ---
 
@@ -48,7 +53,7 @@ This paper introduces KazBench and makes the following contributions:
 
 6. **An open contribution pipeline** with a PR-based native-speaker review process for growing and validating the dataset over time (Section 5).
 
-All artifacts — code, data, harness, leaderboard app — are released publicly. The repository is at [REPO URL TBD]; the dataset will be published on Hugging Face Datasets at [HF DATASET URL TBD].
+All artifacts — code, data, harness, leaderboard app — are released publicly. The repository is at https://github.com/Yersultan04/kazbench; the dataset is published on Hugging Face Datasets at https://huggingface.co/datasets/Yersultan03/kazbench; and the live leaderboard is at https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard.
 
 ---
 
@@ -86,7 +91,7 @@ KazBench was designed around four principles:
 
 **Reproducibility above all.** Fixed prompts, deterministic answer parsers, versioned data, and JSON-serialized results ensure that any two runs of the same model on the same split produce identical scores. Randomness is explicitly excluded from the evaluation pipeline.
 
-**Honest reporting.** The v0.1 seed dataset is small and unvalidated. We report this explicitly throughout and mark all items with `validated: false` until native-speaker review is complete. We do not present seed-data scores as reliable capability estimates for any real model.
+**Honest reporting.** The v0.1.0 DEV split is native-validated (all 296 items `validated: true`) but still modest in size (~49–51 items per task, target 100+). We report this explicitly throughout: scores on a set this size carry wide confidence intervals, and the private TEST split is not yet populated, so current numbers are indicative rather than definitive. Every item carries a `validated` flag so consumers can filter on review status.
 
 ### 3.2 Task Descriptions
 
@@ -100,7 +105,7 @@ KazBench v1 comprises six tasks, described below.
 
 **Metric.** Accuracy (fraction of items correctly answered).
 
-**Seed size.** 18 items (v0.1); target 100+ items after validation.
+**Current size.** 50 items (v0.1.0 DEV split, native-validated); target 100+ items in v1.
 
 **Example (translated for readability):**
 > Question: What is the national instrument of Kazakhstan?
@@ -115,7 +120,7 @@ KazBench v1 comprises six tasks, described below.
 
 **Metric.** Accuracy.
 
-**Seed size.** 16 items (v0.1); target 100+ items after validation.
+**Current size.** 48 items (v0.1.0 DEV split, native-validated); target 100+ items in v1.
 
 **Note.** At v0.1, passages are short. Longer, more complex passages are planned for v1.1.
 
@@ -127,7 +132,7 @@ KazBench v1 comprises six tasks, described below.
 
 **Metric.** Accuracy.
 
-**Seed size.** 16 items (v0.1); target 100+ items after validation.
+**Current size.** 48 items (v0.1.0 DEV split, native-validated); target 100+ items in v1.
 
 **Why this task matters.** A model that generates fluent Russian when prompted in Kazakh will fail this task systematically, making it a strong discriminator between "understands Kazakh" and "understands a Kazakh-Russian mix."
 
@@ -139,7 +144,7 @@ KazBench v1 comprises six tasks, described below.
 
 **Metric.** Accuracy.
 
-**Seed size.** 18 items (v0.1); target 100+ items after validation.
+**Current size.** 51 items (v0.1.0 DEV split, native-validated); target 100+ items in v1.
 
 **Label encoding.** Gold labels are stored in Cyrillic Kazakh (оң / теріс / бейтарап); the harness normalizes model outputs from both Cyrillic and transliterated forms.
 
@@ -151,7 +156,7 @@ KazBench v1 comprises six tasks, described below.
 
 **Metric.** chrF [CITE: Popovic 2015], computed at the sentence level and averaged. chrF is preferred over BLEU for Kazakh because Kazakh's morphological richness causes BLEU's n-gram precision to undercount near-correct translations that differ only in suffix forms.
 
-**Seed size.** 18 items (v0.1), split approximately equally between KK→EN and KK→RU; target 50+ items per direction after validation.
+**Current size.** 50 items (v0.1.0 DEV split, native-validated), split approximately equally between KK→EN and KK→RU; target 50+ items per direction in v1.
 
 #### Task 6: instruction_following — Instruction Following
 
@@ -161,7 +166,7 @@ KazBench v1 comprises six tasks, described below.
 
 **Metric.** Mean judge score (0–1), normalized to 0–100 for the overall aggregate.
 
-**Seed size.** 16 items (v0.1); target 100+ items after validation.
+**Current size.** 49 items (v0.1.0 DEV split, native-validated); target 100+ items in v1.
 
 **Judge reliability caveat.** LLM-as-judge evaluation introduces its own reliability concerns; see Section 8.
 
@@ -184,7 +189,7 @@ Every item in KazBench carries a `source` field indicating its provenance:
 | `exam` | Derived from publicly available Kazakhstani school or UNT/ҰБТ examination materials [CITE: UNT exam source] |
 | `community` | Contributed via community PR, reviewed by two native speakers |
 
-In v0.1, all items carry `source: seed` and `validated: false`. They were generated to bootstrap the harness and verify end-to-end functionality. **They are not suitable for headline capability claims** about any model. The primary task for KazBench community contributors is to write, adapt, or validate items to `validated: true` status.
+In v0.1.0, items were generated with AI assistance and then reviewed by a native Kazakh speaker via Google Sheet. All 296 items now carry `validated: true`. The native reviewer confirmed the correctness of all gold answers across all six tasks. Community contributors can continue expanding the item set via PR.
 
 ### 4.2 Native-Speaker Validation Protocol
 
@@ -216,19 +221,21 @@ Each task file includes one canary item: a benchmark item with a unique `canary`
 
 Canary check is enforced in the CI pipeline via `tools/data/validate.py` and in the submission verification script `tools/verify_submission.py`.
 
-### 4.5 Validation Status at Time of Writing (v0.1)
+### 4.5 Validation Status at Time of Writing (v0.1.0)
+
+Native-speaker validation is complete for the full DEV split. A fluent Kazakh speaker reviewed all items via Google Sheet and confirmed the correctness of every gold answer across all six tasks.
 
 | Task | Items in DEV | Validated | Canary present |
 |---|---|---|---|
-| knowledge_mc | 18 | 0 (0%) | Yes |
-| reading_comprehension | 16 | 0 (0%) | Yes |
-| grammar_morphology | 16 | 0 (0%) | Yes |
-| sentiment | 18 | 0 (0%) | Yes |
-| translation | 18 | 0 (0%) | Yes |
-| instruction_following | 16 | 0 (0%) | Yes |
-| **Total** | **102** | **0 (0%)** | — |
+| knowledge_mc | 50 | 50 (100%) | Yes |
+| reading_comprehension | 48 | 48 (100%) | Yes |
+| grammar_morphology | 48 | 48 (100%) | Yes |
+| sentiment | 51 | 51 (100%) | Yes |
+| translation | 50 | 50 (100%) | Yes |
+| instruction_following | 49 | 49 (100%) | Yes |
+| **Total** | **296** | **296 (100%)** | — |
 
-This table reflects the honest status of the dataset. Recruiting native validators and reaching 100+ validated items per task is the primary open task for KazBench v1.
+The primary open task for KazBench v1 is expanding each task to 100+ items and populating the private TEST split.
 
 ---
 
@@ -267,21 +274,26 @@ The leaderboard is a Gradio app (`leaderboard/app.py`) hosted on Hugging Face Sp
 
 ## 6. Baseline Results
 
-### 6.1 Current Status
+### 6.1 Baseline Results (DEV split, v0.1.0, native-validated)
 
-**All model results in this section are preliminary and run on the unvalidated DEV seed (≈50 items/task). They should not be cited as reliable capability estimates until native validation is complete.**
+We report results for three systems on the fully native-validated DEV split (296 items): two open-weight models served via a Groq-hosted OpenAI-compatible endpoint and an offline dummy baseline for harness verification. Results for `qwen3-32b` and `llama-3.3-70b-versatile` are pending (free-tier token limits); they will be added in a subsequent update.
 
-We report an offline `dummy` baseline (harness verification) and two real open-weight models served via a Groq-hosted OpenAI-compatible endpoint: `meta-llama/llama-4-scout-17b-16e-instruct` and `llama-3.1-8b-instant`. Two further council models (`qwen3-32b`, `llama-3.3-70b-versatile`) were attempted but hit free-tier daily token limits; they will be added when quota refreshes.
+**DEV leaderboard (v0.1.0):**
 
-**Provisional DEV leaderboard:**
-
-| Rank | Model | Overall | KMC | RC | GM | Sent | Trans (chrF) | IF |
+| Rank | Model | Overall | KMC (acc%) | RC (acc%) | GM (acc%) | Sent (acc%) | Trans (chrF) | IF (judge%) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | llama-4-scout-17b | **87.53** | 96.0 | 87.5 | 87.5 | 100.0 | 92.1 | 62.0 |
-| 2 | llama-3.1-8b-instant | **64.94** | 72.0 | 95.8 | 77.1 | 60.8 | 26.4 | 57.6 |
-| 3 | dummy (floor) | 23.22 | 27.8 | 25.0 | 25.0 | 33.3 | 8.2 | 20.0 |
+| 1 | meta-llama/llama-4-scout-17b-16e-instruct | **87.53** | 96.0 | 87.5 | 87.5 | 100.0 | 92.12 | 62.04 |
+| 2 | llama-3.1-8b-instant | **64.94** | 72.0 | 95.83 | 77.08 | 60.78 | 26.41 | 57.55 |
+| 3 | dummy (floor) | **22.97** | — | — | — | — | — | — |
 
-Even on the small seed, the benchmark **discriminates clearly** (real models 65–88 vs. a 23 floor) and surfaces where Kazakh is hard: translation capability differs almost 4× between the two models (chrF 92.1 vs 26.4), and **both** fall to ≈60% on instruction-following — following instructions *in Kazakh* is hard even for the stronger model.
+*KMC = knowledge_mc, RC = reading_comprehension, GM = grammar_morphology, Sent = sentiment, Trans = translation, IF = instruction_following.*
+
+The benchmark discriminates clearly across capability levels (Scout 87.53 vs. Llama-8B 64.94 vs. dummy floor 22.97). Key observations:
+
+- **Translation is the sharpest discriminator.** chrF 92.12 vs. 26.41 — a ~3.5× gap — shows that translation quality scales strongly with model size and multilingual training.
+- **Instruction-following is hard for both.** Both models cluster around 57–62%, reflecting genuine difficulty in understanding and complying with instructions written in Kazakh.
+- **Sentiment is a strength for Scout.** 100% accuracy on 51 items, compared to 60.78% for the smaller model.
+- **Reading comprehension is a relative strength for Llama-8B** (95.83%), narrowly outperforming Scout (87.5%) — likely a prompt-sensitivity artifact at this item count.
 
 ### 6.1b Methodology validation: the evaluation caught its own bug
 
@@ -291,43 +303,33 @@ Native-speaker validation of the seed (in progress) remains required before thes
 
 ### 6.2 Dummy Baseline (Harness Verification Only)
 
-The dummy adapter returns a fixed deterministic response per task type (index `"1"` for MC tasks, an empty string for generation tasks). This produces a harness-verification score, not a meaningful capability score.
+The dummy adapter returns a fixed deterministic response per task type (index `"1"` for MC tasks, an empty string for generation tasks). This produces a harness-verification score, not a meaningful capability score. The overall dummy score on the v0.1.0 validated DEV split is **22.97/100**.
 
-| Task | Metric | Dummy Score | n (items) | Notes |
-|---|---|---|---|---|
-| knowledge_mc | accuracy | 22.2% | 18 | Seed only, unvalidated |
-| reading_comprehension | accuracy | 12.5% | 16 | Seed only, unvalidated |
-| grammar_morphology | accuracy | 100.0% | 16 | Artifact: dummy always outputs "0"; seed items heavily skewed to answer 0 |
-| sentiment | accuracy | 0.0% | 18 | Dummy output doesn't match label format |
-| translation | chrF | 0.00 | 18 | Empty hypothesis |
-| instruction_following | judge (LLM) | 20.0% | 16 | Judge unavailable in dummy; returns 0.0 per item; value above reflects harness stub |
-| **Overall** | macro-avg | **25.79 / 100** | 102 | Harness verification only |
-
-> Note: the table above reflects the *initial* v0.1 seed. The `grammar_morphology` 100% was a data artifact (all correct answers at index 0); answer positions have since been **randomized evenly** across choices, and the dummy now scores ≈25% on all MC tasks (see the leaderboard in §6.1, dummy overall 23.22). Sentiment/translation 0.0 reflects the dummy producing no real generation, not a model property.
+> Note: an earlier seed run produced a `grammar_morphology` dummy score of 100% — a data artifact caused by all correct answers sitting at index 0. Answer positions were subsequently randomized evenly across choices, eliminating the artifact. The dummy overall dropped from 25.79 (initial seed) to 22.97 (v0.1.0). Sentiment/translation near-zero reflects the dummy producing no real generation, not a model property.
 
 **These scores should not appear in any comparison table or marketing material.** They exist solely to confirm that the harness runs without errors.
 
-### 6.3 Planned Real-Model Baselines
+### 6.3 Planned Additional Baselines
 
-Once validation is complete, we plan to run and report results for a representative set of models including:
+We plan to run and report results for a broader set of models including:
 
 - Frontier closed-source models with known multilingual support (GPT-4o, Claude, Gemini variants) [CITE: model technical reports]
 - Open-source multilingual models with Turkic or Central-Asian language coverage [CITE: relevant model papers]
 - Kazakh-specific fine-tuned models, if available [CITE: community Kazakh model efforts]
 
-We will report these results in a subsequent version of this paper and update the public leaderboard.
+Results will be added to the public leaderboard (https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard) as they become available and reported in a subsequent version of this paper.
 
 ---
 
 ## 7. Limitations
 
-### 7.1 Seed Data Size and Reliability
+### 7.1 Dataset Size
 
-The v0.1 dataset contains ≈50 items per task (296 total), all currently `validated: false`. This is enough to discriminate strong from weak models (§6.1) but still too small for statistically tight per-task estimates: a few items can swing a 50-item accuracy by several points, and we do not yet report confidence intervals. Results on the current seed should be treated as indicative, not authoritative, until native validation and further expansion (target 100–200 items/task) are complete.
+The v0.1.0 DEV split contains ~49–51 items per task (296 total), all native-validated. This is sufficient to discriminate strong from weak models (§6.1) but still too small for statistically tight per-task estimates: a few items can swing a 50-item accuracy by several percentage points, and we do not yet report confidence intervals. The target for v1 is 100 items per task. The private TEST split has not yet been populated; leaderboard scores are currently DEV-only and should be treated as indicative rather than definitive until TEST verification is in place.
 
-### 7.2 Pending Native Validation
+### 7.2 Coverage of Additional Models
 
-Every item in the DEV split is currently `validated: false`. The items were generated with AI assistance and have not been reviewed by native Kazakh speakers. Grammatical errors, culturally inappropriate items, or items with ambiguous correct answers may be present. We flag this explicitly so that downstream users do not mistake seed data quality for validated benchmark quality.
+Only two real models have been evaluated to date. Frontier closed-source models (GPT-4o, Claude, Gemini) and larger open-weight models have not yet been run. The current leaderboard therefore does not represent the full range of model capability on Kazakh.
 
 ### 7.3 Prompt Script (resolved)
 
@@ -369,11 +371,10 @@ The KazBench dataset contains no personal information. Items are constructed fro
 
 We commit to:
 
-- Marking all unvalidated data explicitly with `validated: false`.
-- Never reporting seed-data scores as model capability baselines in external communications.
-- Disclosing all known harness artifacts and data biases in benchmark documentation.
+- Marking any unvalidated data explicitly with `validated: false`; all current DEV items are `validated: true`.
+- Disclosing all known harness artifacts and data biases in benchmark documentation (see §6.1b for the scoring bug we caught and fixed before publication).
 - Maintaining the private TEST split's confidentiality even if data requests are received, to preserve leaderboard integrity.
-- Updating this paper when real model results are available, without cherry-picking favorable results.
+- Updating this paper when additional model results are available, without cherry-picking favorable results.
 
 ### 8.4 Potential for Misuse
 
@@ -381,15 +382,15 @@ A benchmark can be "gamed" by fine-tuning directly on the DEV split. We mitigate
 
 ### 8.5 Representativeness
 
-The benchmark was designed by a non-native Kazakh speaker with AI-assisted generation, pending native-speaker validation. This introduces the risk of items that are grammatically incorrect, culturally inappropriate, or systematically easier or harder than intended. The two-reviewer validation protocol is our primary mitigation, but we acknowledge that the current v0.1 seed set has not yet passed this review.
+The benchmark was designed by a non-native Kazakh speaker with AI-assisted generation and subsequently reviewed by a native Kazakh speaker who confirmed the correctness of all gold answers across all 296 items. Risks of grammatically unusual phrasing or subtle cultural misrepresentation remain; we consider the current validation a necessary first pass rather than a comprehensive two-reviewer audit. We invite additional native speakers to review and contribute items via the GitHub PR pipeline.
 
 ---
 
 ## 9. Conclusion
 
-KazBench provides the first publicly available, multi-task, reproducible evaluation suite for assessing LLM performance on the Kazakh language. By releasing a model-agnostic harness, a public leaderboard, and an open contribution pipeline, we aim to make KazBench community-maintained infrastructure rather than a one-time research artifact. The most critical near-term work is growing and validating the item set with fluent native speakers — we invite the Kazakh NLP community to contribute via GitHub.
+KazBench provides the first publicly available, multi-task, reproducible evaluation suite for assessing LLM performance on the Kazakh language. By releasing a model-agnostic harness, a native-validated DEV split, a live public leaderboard, and an open contribution pipeline, we aim to make KazBench community-maintained infrastructure rather than a one-time research artifact.
 
-The benchmark is deliberately honest about its current limitations: the v0.1 seed is small, unvalidated, and not suitable for model comparison. We publish it now to establish the infrastructure, invite early contribution, and ensure reproducibility of the evaluation pipeline before real model runs are conducted.
+As of v0.1.0, the benchmark is fully operational: 296 native-validated items across six tasks, two open-weight model baselines (Scout 87.53, Llama-8B 64.94), and all artifacts publicly available at https://github.com/Yersultan04/kazbench and https://huggingface.co/datasets/Yersultan03/kazbench. The most critical near-term work is expanding each task to 100+ items, populating the private TEST split, and broadening model coverage to include frontier closed-source models. We invite the Kazakh NLP community to contribute items and submit model results via GitHub.
 
 ---
 

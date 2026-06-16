@@ -196,7 +196,7 @@ None. The dataset contains no personal information, no individually identifiable
 
 - **Contamination:** The DEV split is public and may appear in future model training corpora. The private TEST split mitigates this for leaderboard scores, but DEV scores are subject to contamination risk as the benchmark matures.
 - **Score inflation from gaming:** A model fine-tuned on KazBench DEV items would achieve inflated scores. Submissions are expected to disclose training data usage.
-- **Misrepresentation:** v0.1 dummy-baseline scores (overall 25.79/100) must not be presented as model capability estimates. They reflect harness plumbing, not Kazakh language understanding.
+- **Misrepresentation:** the dummy-baseline score (overall 22.97/100 on the v0.1.0 DEV split) must not be presented as a model capability estimate. It reflects harness plumbing and random guessing, not Kazakh language understanding.
 
 ### Limitations
 

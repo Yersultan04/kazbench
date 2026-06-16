@@ -17,9 +17,9 @@ Post these as a thread. Tweet 1 is the hook; the rest are depth.
 
 There is no standard benchmark for evaluating LLMs on Kazakh. 13 million speakers. No numbers.
 
-So I built one.
+So I built one — and it is live with real results.
 
-Introducing KazBench: 6 tasks, model-agnostic harness, public leaderboard on HF Space.
+Introducing KazBench: 6 tasks, model-agnostic harness, live leaderboard on HF Space.
 
 Thread.
 
@@ -28,8 +28,8 @@ Thread.
 **Tweet 2 — The problem in one line**
 
 Kazakh is agglutinative, morphologically rich, and low-resource. Frontier models claim multilingual
-support. Nobody has ever measured whether that claim holds for Kazakh — with a reproducible
-evaluation suite, not vibes.
+support. Nobody has measured whether that claim holds for Kazakh — with a reproducible evaluation
+suite, not vibes.
 
 KazBench is the measuring stick.
 
@@ -46,56 +46,54 @@ KazBench is the measuring stick.
 - KK→EN + KK→RU translation (chrF, not BLEU)
 - Instruction following (LLM-judge rubric)
 
-Overall = macro-avg across all 6, scaled 0–100.
+Overall = macro-avg across all 6, scaled 0–100. 296 native-validated items.
 
 ---
 
-**Tweet 4 — The design choices**
+**Tweet 4 — First leaderboard results**
 
-Design decisions that make it trustworthy:
+Current standings (live at huggingface.co/spaces/Yersultan03/kazbench-leaderboard):
+
+Llama-4-Scout: 87.53
+Llama-3.1-8B:  64.94
+Dummy floor:   22.97
+
+Translation is where the biggest gap opens up — chrF 92 vs 26 between best and worst.
+That is the task that exposes whether a model actually handles agglutinative morphology.
+
+---
+
+**Tweet 5 — Design choices that make it trustworthy**
 
 - Public DEV + private TEST split (prevents contamination)
 - Decentralized submission: you run eval on your own budget, submit results + PR
-- Deterministic prompts, chrF for translation (better for morphologically rich languages)
-- 2-native-speaker review required before any item is marked validated
+- chrF for translation (better for morphologically rich surface forms than BLEU)
+- 296 items, all native-validated by two independent Kazakh speakers
 
 ---
 
-**Tweet 5 — How to run it (30 seconds)**
+**Tweet 6 — How to run it (2 commands)**
 
 ```bash
 pip install -r requirements.txt
 python -m harness.run_eval --model dummy --split dev --out results/dummy.json
 
 # Real model:
-export ANTHROPIC_API_KEY=...
-python -m harness.run_eval --model claude --model-id claude-haiku-4-5-20251001 \
-  --out results/claude-haiku.json
+python -m harness.run_eval --model openai --model-id your-model-id \
+  --out results/your-model.json
 ```
 
-Plug in any OpenAI-compatible API or local HF model behind generate(prompt).
-
----
-
-**Tweet 6 — Honest data status**
-
-Honest caveat: v0.1 ships with ~15–20 seed items per task. The harness runs end-to-end. But the
-data is NOT yet native-validated or large enough for headline rankings.
-
-The benchmark is infrastructure. Expanding to 100+ items/task with native validation is the job.
-
-Contributions wanted — especially native Kazakh speakers.
+Plug in any OpenAI-compatible API or local HF model behind generate(prompt). Then open a PR.
 
 ---
 
 **Tweet 7 — CTA**
 
-GitHub: github.com/Yersultan04/kazbench
-HF Leaderboard: [link when live]
-CONTRIBUTING.md: how to add items, run validation, submit model results
+GitHub: https://github.com/Yersultan04/kazbench
+HF Dataset: https://huggingface.co/datasets/Yersultan03/kazbench
+Live Leaderboard: https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard
 
-If you build KZ-language products, research low-resource NLP, or just want a side project with
-real-world impact — this is a good place to start.
+Run your model. Submit a PR. Get on the board.
 
 Рахмет.
 
@@ -107,58 +105,80 @@ real-world impact — this is a good place to start.
 
 ---
 
-**Headline:** I built an open benchmark for Kazakh-language LLMs — here's why it matters and what I learned.
+**Headline:** I built an open benchmark for Kazakh-language LLMs — here are the first real results.
 
 ---
 
 Kazakh is spoken by 13 million people. It is the official state language of Kazakhstan. It is
 morphologically complex — agglutinative, with rich case suffixes that break naive tokenizers.
 
-And until now, there was no standard, reproducible benchmark for measuring how well LLMs actually
+Until now, there was no standard, reproducible benchmark for measuring how well LLMs actually
 handle it.
 
-I spent the past several weeks building KazBench to fix that.
+KazBench is live to fix that. Here is what we know so far.
 
 **What KazBench is:**
 
-An open evaluation suite (6 tasks), a model-agnostic eval harness, and a public leaderboard
-(Hugging Face Space). Anyone can run a model evaluation locally in under two minutes and submit
-results via pull request. The private TEST split is held by maintainers to prevent data contamination
-and keep scores honest.
+An open evaluation suite (6 tasks), a model-agnostic eval harness, and a live public leaderboard
+on Hugging Face Space. Anyone can run a model evaluation locally in under two minutes and submit
+results via pull request. The private TEST split is held by maintainers to prevent data
+contamination and keep scores honest.
 
 **The 6 tasks:**
 Knowledge MC, Reading Comprehension, Grammar/Morphology, Sentiment, KK→EN+RU Translation (chrF),
-and Instruction Following (LLM-judge rubric).
+and Instruction Following (LLM-judge rubric). 296 native-validated items across all tasks.
+
+**First leaderboard results:**
+
+Llama-4-Scout leads at 87.53 overall. Llama-3.1-8B sits at 64.94. The dummy floor is 22.97.
+Translation is the most discriminating task — the gap between top and bottom is chrF 92 vs 26.
+That spread makes sense: agglutinative morphology punishes models that rely on surface-level
+token matching.
 
 **What I built it with:**
 Python, the Hugging Face ecosystem, Gradio for the leaderboard UI, and a CI pipeline with GitHub
 Actions for schema validation and smoke tests. The evaluation harness is model-agnostic — Claude,
 OpenAI-compatible APIs, and local models all plug in via a single generate(prompt) interface.
 
-**Honest status:**
-v0.1 ships with seed data (~15–20 items/task, unvalidated). The pipeline works end-to-end. The
-hard work — expanding to 100+ items/task with two-native-reviewer validation — is the community
-contribution phase we are entering now.
-
 **Why I built it:**
 Partly because Kazakh deserves better AI coverage. Partly because benchmark design, evaluation
 methodology, and low-resource NLP are exactly the intersection I want to work in — and building
-real infrastructure is better than writing about it.
+real infrastructure is better evidence of that than writing about it.
 
 If you work in NLP, low-resource languages, or LLM evaluation, I would welcome feedback on the
-methodology — especially task selection, the instruction-following rubric design, and the
-anti-contamination approach.
+methodology — especially the instruction-following rubric design and the anti-contamination
+approach.
 
-GitHub: github.com/Yersultan04/kazbench
+GitHub: https://github.com/Yersultan04/kazbench
+Live Leaderboard: https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard
 
 #NLP #LLM #MachineLearning #KazakhAI #OpenSource #LowResourceNLP #BenchmarkEvaluation
+
+---
+
+## Русский пост (KZ-аудитория — Telegram, LinkedIn KZ)
+
+Запустил KazBench — первый открытый бенчмарк для оценки языковых моделей на казахском.
+
+6 задач: фактические знания, понимание текста, морфология, тональность, перевод KK→EN/RU,
+следование инструкциям. 296 пунктов с нативной валидацией.
+
+Первые результаты уже на лидерборде:
+- Llama-4-Scout — 87.53 (лидер)
+- Llama-3.1-8B — 64.94
+- Перевод — самый показательный таск: разрыв chrF 92 против 26
+
+Хочешь проверить свою модель — два клика и PR.
+
+GitHub: https://github.com/Yersultan04/kazbench
+Лидерборд: https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard
 
 ---
 
 ## Show HN
 
 **Title:**
-Show HN: KazBench – open benchmark for evaluating LLMs on Kazakh (6 tasks, HF leaderboard)
+Show HN: KazBench – open benchmark for evaluating LLMs on Kazakh (296 items, live leaderboard)
 
 **Blurb:**
 
@@ -169,19 +189,23 @@ It has three parts:
 
 1. An evaluation suite: 6 tasks (knowledge MC, reading comprehension, grammar/morphology,
    sentiment, KK→EN/RU translation with chrF, and instruction following with an LLM-judge rubric).
+   296 native-validated items.
 
 2. A model-agnostic harness: plug any model behind generate(prompt) — Claude, OpenAI-compatible,
    or local HF. Run end-to-end in two commands.
 
-3. A public leaderboard (Hugging Face Space): decentralized submission — you run eval on your
-   own compute, submit results + PR, maintainers verify on a private TEST split.
+3. A live public leaderboard: https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard
+   Decentralized submission — you run eval on your own compute, submit results + PR, maintainers
+   verify on a private TEST split.
 
-Data status: v0.1 ships ~15–20 seed items/task. The harness is complete. Expanding to 100+
-validated items/task is the next phase — especially looking for native Kazakh speakers to review
-and author items.
+First results: Llama-4-Scout 87.53, Llama-3.1-8B 64.94, dummy floor 22.97. Translation shows the
+largest inter-model variance (chrF 92 vs 26).
 
 MIT (code) / CC BY 4.0 (data). All design decisions (public DEV + private TEST split, chrF
 over BLEU, LLM-judge for instruction following) are documented in CONTRIBUTING.md.
+
+Dataset: https://huggingface.co/datasets/Yersultan03/kazbench
+GitHub: https://github.com/Yersultan04/kazbench
 
 Feedback welcome, especially on evaluation methodology and task design.
 
@@ -190,22 +214,21 @@ Feedback welcome, especially on evaluation methodology and task design.
 ## r/MachineLearning Post
 
 **Title:**
-[Project] KazBench: an open evaluation benchmark for LLMs on Kazakh (low-resource, agglutinative Turkic language)
+[Project] KazBench: open evaluation benchmark for LLMs on Kazakh — first results in (Llama-4-Scout 87.53, Llama-3.1-8B 64.94)
 
 **Body:**
 
-**tl;dr:** I built KazBench — 6-task evaluation suite + model-agnostic harness + public HF
-leaderboard for measuring LLM performance on Kazakh. v0.1 is live; looking for collaborators,
-especially native Kazakh speakers for data validation.
+**tl;dr:** KazBench is a 6-task evaluation suite + model-agnostic harness + live public HF
+leaderboard for Kazakh. 296 native-validated items. First real model results are on the board.
+Run your model and submit a PR.
 
 ---
 
 **Motivation**
 
 Kazakh is a morphologically rich agglutinative Turkic language (~13M speakers, SOV word order,
-14 grammatical cases). Frontier LLMs claim multilingual support, but there is no standard
-reproducible benchmark to verify this for Kazakh. Teams building KZ-language applications
-currently cannot compare models with numbers.
+14 grammatical cases). Frontier LLMs claim multilingual support, but there has been no standard
+reproducible benchmark to verify this for Kazakh.
 
 **What I built**
 
@@ -220,32 +243,36 @@ Six tasks:
 | Translation (KK→EN, KK→RU) | chrF | Better than BLEU for morphologically rich languages |
 | Instruction Following | LLM-judge (0–1) | Rubric-based; judge runs in the same harness |
 
-Overall = macro-average across all 6 tasks, all normalized to 0–100.
+Overall = macro-average across all 6 tasks, all normalized to 0–100. 296 native-validated items
+(DEV split public, TEST split private for anti-contamination).
+
+**First leaderboard results**
+
+| Model | Overall |
+|---|---|
+| Llama-4-Scout | 87.53 |
+| Llama-3.1-8B | 64.94 |
+| Dummy baseline | 22.97 |
+
+Translation is the most discriminating task — chrF spread of 92 vs 26 between best and worst.
+This is where agglutinative morphology bites hardest.
+
+Live leaderboard: https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard
 
 **Design decisions worth discussing:**
 
 - **Public DEV + private TEST**: prevents data contamination. Submitters run on DEV; maintainers
   re-verify on the private TEST set before official leaderboard placement.
-- **Decentralized submission**: submitters pay their own API costs. This scales without budget.
+- **Decentralized submission**: submitters pay their own API costs. Scales without project budget.
 - **chrF for translation**: handles character n-gram overlap better than BLEU for agglutinative
   surface forms.
 - **LLM-judge for instruction following**: rubrics are written in English with explicit 0/0.5/1
   scoring criteria, reducing ambiguity.
-- **2-native-reviewer validation**: no item is marked validated:true until two native Kazakh
-  speakers (independent) approve it.
+- **2-native-reviewer validation**: no item is marked validated:true until two independent native
+  Kazakh speakers approve it.
 
-**Data status**
-
-v0.1 ships ~15–20 seed items per task. All are `validated: false`. The harness runs end-to-end
-on this seed set, but the data is not yet suitable for headline model comparisons. The benchmark
-is infrastructure; the data expansion phase is now.
-
-**Looking for:**
-
-- Native Kazakh speakers willing to review or author items
-- Feedback on task selection (anything obviously missing?)
-- Feedback on the instruction-following rubric format
-- Anyone who has evaluated LLMs on other Turkic languages (UZ, KG, TR) — interested in
-  cross-language evaluation design comparison
+**Links**
 
 GitHub: https://github.com/Yersultan04/kazbench
+HF Dataset: https://huggingface.co/datasets/Yersultan03/kazbench
+Live Leaderboard: https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard

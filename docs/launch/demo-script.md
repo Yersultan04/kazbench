@@ -8,8 +8,8 @@ tool-recommendation: asciinema (Linux/macOS) or PowerShell + ttyrec / Terminaliz
 
 ## Goal
 
-Show in one continuous take: install dependencies, run an offline eval, inspect results, preview
-the leaderboard. No API key required. Viewer understands what KazBench does without reading a word.
+Show in one continuous take: install dependencies, run an offline eval, inspect results, open the
+live leaderboard. No API key required. Viewer understands what KazBench does without reading a word.
 
 ## Prerequisites for recording
 
@@ -50,13 +50,13 @@ because the venv is pre-warmed. The line just clears cleanly.
 ```
 (kazbench) $ python -m harness.run_eval --model dummy --split dev --out results/dummy.json
 [kazbench] Building model adapter: dummy
-[kazbench] Task=knowledge_mc        n=18  ...  accuracy=22.2%
-[kazbench] Task=reading_comprehension  n=16  ...  accuracy=12.5%
-[kazbench] Task=grammar_morphology  n=16  ...  accuracy=100.0%
-[kazbench] Task=sentiment           n=18  ...  accuracy=0.0%
-[kazbench] Task=translation         n=18  ...  chrF=0.00
-[kazbench] Task=instruction_following  n=16  ...  judge=20.0%
-[kazbench] Done. Tasks run: 6  Overall: 25.79/100
+[kazbench] Task=knowledge_mc           n=...  accuracy=...%
+[kazbench] Task=reading_comprehension  n=...  accuracy=...%
+[kazbench] Task=grammar_morphology     n=...  accuracy=...%
+[kazbench] Task=sentiment              n=...  accuracy=...%
+[kazbench] Task=translation            n=...  chrF=...
+[kazbench] Task=instruction_following  n=...  judge=...%
+[kazbench] Done. Tasks run: 6  Overall: 22.97/100
 [kazbench] Results -> .../results/dummy.json
 ```
 
@@ -64,7 +64,7 @@ Let this run at normal speed — it takes 1–2 seconds total (no API calls). Th
 appear sequentially, giving a sense of the pipeline in motion.
 
 **Voice-over / caption:**
-"Run any model. Here: the offline dummy baseline."
+"Run any model. Here: the offline dummy baseline. Floor is 22.97."
 
 ---
 
@@ -79,14 +79,14 @@ appear sequentially, giving a sense of the pipeline in motion.
   "adapter": "dummy",
   "kazbench_version": "0.1.0",
   "split": "dev",
-  "overall": 25.79,
+  "overall": 22.97,
   "tasks": {
-    "knowledge_mc":         { "metric": "accuracy", "score": 0.2222, "n": 18 },
-    "reading_comprehension": { "metric": "accuracy", "score": 0.1250, "n": 16 },
-    "grammar_morphology":   { "metric": "accuracy", "score": 1.0000, "n": 16 },
-    "sentiment":            { "metric": "accuracy", "score": 0.0000, "n": 18 },
-    "translation":          { "metric": "chrF",     "score": 0.0000, "n": 18 },
-    "instruction_following":{ "metric": "judge",    "score": 0.2000, "n": 16 }
+    "knowledge_mc":          { "metric": "accuracy", "score": ..., "n": ... },
+    "reading_comprehension":  { "metric": "accuracy", "score": ..., "n": ... },
+    "grammar_morphology":    { "metric": "accuracy", "score": ..., "n": ... },
+    "sentiment":             { "metric": "accuracy", "score": ..., "n": ... },
+    "translation":           { "metric": "chrF",     "score": ..., "n": ... },
+    "instruction_following": { "metric": "judge",    "score": ..., "n": ... }
   }
 }
 ```
@@ -94,71 +94,52 @@ appear sequentially, giving a sense of the pipeline in motion.
 Pause 1–2 seconds on this. It communicates: structured output, every task scored, versioned.
 
 **Voice-over / caption:**
-"Structured JSON output. Drop it in results/ to update the leaderboard."
+"Structured JSON output. Open a PR to submit and land on the leaderboard."
 
 ---
 
 ### SHOT 4 — Swap to real model (5 seconds)
 
-**What appears on screen (just the command, do not actually run it in the recording — it costs money):**
+**What appears on screen (just the command — do not actually run it in the recording):**
 
 ```
 (kazbench) $ python -m harness.run_eval \
-    --model claude \
-    --model-id claude-haiku-4-5-20251001 \
-    --out results/claude-haiku.json
+    --model openai \
+    --model-id your-model-id \
+    --out results/your-model.json
 ```
 
 Show the command, then cut before it executes. This communicates "it works with real models too"
 without requiring an API call on screen.
 
 **Voice-over / caption:**
-"Swap --model claude. Or --model openai. Same interface."
+"Swap --model openai. Or --model claude. Same interface."
 
 ---
 
-### SHOT 5 — Build the leaderboard locally (8–10 seconds)
+### SHOT 5 — Open the live leaderboard (5–8 seconds)
 
-**What appears on screen:**
+**Switch to browser.**
 
-```
-(kazbench) $ python tools/build_leaderboard.py
-[leaderboard] Found 1 result(s) in results/
-[leaderboard] Written leaderboard.md
+Cut to a browser tab showing the live Gradio leaderboard at:
+https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard
 
-(kazbench) $ head -30 leaderboard.md
-```
+The ranked table is visible with real results:
 
-The head command shows the markdown table. A leaderboard row appears with the dummy model scores.
-This is the moment the viewer understands the full pipeline: eval → JSON → leaderboard.
+| Model | Overall | ... |
+|---|---|---|
+| Llama-4-Scout | 87.53 | |
+| Llama-3.1-8B | 64.94 | |
+| dummy | 22.97 | |
+
+Pause 2 seconds so the viewer can read the scores.
 
 **Voice-over / caption:**
-"Auto-builds the leaderboard from result files."
+"Live leaderboard on Hugging Face. Submit a PR to add your model."
 
 ---
 
-### SHOT 6 — Open the HF Space (3–5 seconds)
-
-**Switch to browser (not terminal).**
-
-Cut to a browser tab showing the Gradio leaderboard (HF Space URL). The ranked table is visible.
-The Refresh button is visible. At minimum one row is populated (even with dummy data).
-
-If the HF Space is not yet live at recording time, use a locally running instance:
-
-```
-(kazbench) $ python leaderboard/app.py
-Running on local URL: http://127.0.0.1:7860
-```
-
-Then switch to browser showing http://127.0.0.1:7860.
-
-**Voice-over / caption:**
-"Public leaderboard on Hugging Face Space. Submit a PR to add your model."
-
----
-
-### SHOT 7 — End card (3 seconds)
+### SHOT 6 — End card (3 seconds)
 
 Terminal or static frame. Show:
 
@@ -181,15 +162,10 @@ python -m harness.run_eval --model dummy --split dev --out results/dummy.json
 # 3. Inspect results
 cat results/dummy.json
 
-# 4. (Optional: show real model command, do not execute)
-# python -m harness.run_eval --model claude --model-id claude-haiku-4-5-20251001 --out results/claude-haiku.json
+# 4. (Show real model command, do not execute)
+# python -m harness.run_eval --model openai --model-id your-model-id --out results/your-model.json
 
-# 5. Build leaderboard markdown
-python tools/build_leaderboard.py
-head -30 leaderboard.md
-
-# 6. Launch leaderboard UI (then switch to browser)
-python leaderboard/app.py
+# 5. Switch to browser: https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard
 ```
 
 ---
@@ -200,6 +176,5 @@ python leaderboard/app.py
 - If using asciinema: `asciinema rec demo.cast --overwrite` then `agg demo.cast demo.gif`
 - If using Terminalizer (Windows): `terminalizer record demo -d "zsh"` then `terminalizer render demo`
 - Add 1.0s pause after each command completes before typing the next (looks deliberate, not rushed).
-- The grammar_morphology line showing `accuracy=100.0%` is from the dummy model — the dummy always
-  picks choice 0, and the seed data happens to have answer=0 for all grammar items. Fine to show;
-  it is a property of the seed data, not a real model result. Do not frame it as a real score.
+- The dummy overall is 22.97 — use that as the floor reference in any caption or voice-over.
+- For Shot 5, the leaderboard is live: no need to run locally. Just open the HF Space URL directly.
