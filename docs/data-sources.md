@@ -5,6 +5,21 @@ items (closing the synthetic-data and ceiling risks). Compiled from a deep-resea
 pass (15 primary sources, 74 claims; 7 verified 3-0/2-1, rest source-backed but
 verification cut short by a session limit — re-verify before headline use).
 
+## ⚡ CEILING PROOF (2026-06-17) — why this matters, measured
+
+After integrating real data, gpt-4o-mini was run on synthetic vs real items:
+
+| Task | Synthetic (our generated) | Real human-sourced | Δ |
+|---|---|---|---|
+| knowledge_mc | 96.0% | **50.0%** (real ЕНТ) | **−46 pts** |
+| sentiment | 96.1% | 87.8% (Darmm reviews) | −8 pts |
+
+Real ЕНТ exam questions collapse a strong model from 96% to 50% — confirming the
+synthetic set was saturated and that human exam data restores discrimination.
+**Status: integrated.** `knowledge_mc` now carries 50 DEV + 30 TEST real ЕНТ items
+(`source: exam`); `sentiment` carries 49 DEV + 30 TEST real reviews (`source: community`).
+These are `validated: false` pending native review.
+
 ## TL;DR — what to take first
 
 1. **KazSAnDRA** → `sentiment` (license CC-BY-4.0, drop-in compatible)
