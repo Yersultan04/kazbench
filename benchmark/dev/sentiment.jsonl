@@ -49,52 +49,52 @@
 {"id": "snt_000049", "task": "sentiment", "source": "seed", "validated": true, "text": "Концерт керемет өтті, рахаттандым!", "label": "оң"}
 {"id": "snt_000050", "task": "sentiment", "source": "seed", "validated": true, "text": "Интернет жылдамдығы тым баяу, жұмыс істеу қиын болды.", "label": "теріс"}
 {"id": "snt_000051", "task": "sentiment", "source": "seed", "validated": true, "text": "Автобус аялдамасы көшенің бұрышында.", "label": "бейтарап"}
-{"id": "snt_000052", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа пицца орны ашылды, қамыры жұп-жұмсақ, өте дәмді болды!", "label": "оң"}
-{"id": "snt_000053", "task": "sentiment", "source": "seed", "validated": false, "text": "Сорпа тұзы артық еді, ішуге келмеді, көңілім қалды.", "label": "теріс"}
-{"id": "snt_000054", "task": "sentiment", "source": "seed", "validated": false, "text": "Асхана түскі үзіліс кезінде сағат бірден екіге дейін жұмыс істемейді.", "label": "бейтарап"}
-{"id": "snt_000055", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа қазақ фильмі жүрегімді жылытты, актерлердің ойыны тамаша!", "label": "оң"}
-{"id": "snt_000056", "task": "sentiment", "source": "seed", "validated": false, "text": "Кинотеатрдағы дыбыс жүйесі сынған еді, дауыс анық естілмеді, ренжідік.", "label": "теріс"}
-{"id": "snt_000057", "task": "sentiment", "source": "seed", "validated": false, "text": "Фильм сеансы кешкі жетіде басталады.", "label": "бейтарап"}
-{"id": "snt_000058", "task": "sentiment", "source": "seed", "validated": false, "text": "Бүгін күн ашық әрі жылы, серуендеуге шықтым, көңіл-күйім керемет!", "label": "оң"}
-{"id": "snt_000059", "task": "sentiment", "source": "seed", "validated": false, "text": "Үш күн қатарынан жаңбыр жауып, киімдерім кеппеді, әбден мезі болдым.", "label": "теріс"}
-{"id": "snt_000060", "task": "sentiment", "source": "seed", "validated": false, "text": "Ертең ауа райы бұлтты, температура он бес градус болады деп болжанып отыр.", "label": "бейтарап"}
-{"id": "snt_000061", "task": "sentiment", "source": "seed", "validated": false, "text": "Жеңілдікпен сатып алған құлаққабым керемет дыбыс береді, өте риза болдым!", "label": "оң"}
-{"id": "snt_000062", "task": "sentiment", "source": "seed", "validated": false, "text": "Сатып алған етігім бір аптада тесіліп қалды, сапасы өте нашар екен.", "label": "теріс"}
-{"id": "snt_000063", "task": "sentiment", "source": "seed", "validated": false, "text": "Дүкенде маусымдық жеңілдіктер жұма күні басталады.", "label": "бейтарап"}
-{"id": "snt_000064", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа жобамды басшылық қолдады, мансабым алға басып келеді, қуаныштымын!", "label": "оң"}
-{"id": "snt_000065", "task": "sentiment", "source": "seed", "validated": false, "text": "Жұмыста қосымша жүктеме көбейіп кетті, түнге дейін отырамын, шаршадым.", "label": "теріс"}
-{"id": "snt_000066", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа қызметкер дүйсенбіден бастап жұмысқа кіріседі.", "label": "бейтарап"}
-{"id": "snt_000067", "task": "sentiment", "source": "seed", "validated": false, "text": "Курсты сәтті аяқтап, сертификат алдым, білімім артқанына қуаныштымын!", "label": "оң"}
-{"id": "snt_000068", "task": "sentiment", "source": "seed", "validated": false, "text": "Дәріс тым ұзаққа созылды әрі түсініксіз болды, ештеңе ұқпай шықтым.", "label": "теріс"}
-{"id": "snt_000069", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа оқу жылы бірінші қыркүйекте басталады.", "label": "бейтарап"}
-{"id": "snt_000070", "task": "sentiment", "source": "seed", "validated": false, "text": "Командамыз чемпионатта алтын жүлдені жеңіп алды, бәріміз мерейлендік!", "label": "оң"}
-{"id": "snt_000071", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаттықтырушы жаттығуды кенеттен болдырмады, бекер келіппіз, көңілсіз болдық.", "label": "теріс"}
-{"id": "snt_000072", "task": "sentiment", "source": "seed", "validated": false, "text": "Бассейн сейсенбі мен бейсенбіде таңертең балалар тобына арналған.", "label": "бейтарап"}
-{"id": "snt_000073", "task": "sentiment", "source": "seed", "validated": false, "text": "Дәмханада даяшы өте сыпайы әрі шапшаң болды, қызметке ризамын!", "label": "оң"}
-{"id": "snt_000074", "task": "sentiment", "source": "seed", "validated": false, "text": "Шаштараздағы шаш қию мүлдем ұнамады, ақшаны босқа төледім деп өкіндім.", "label": "теріс"}
-{"id": "snt_000075", "task": "sentiment", "source": "seed", "validated": false, "text": "Банк бөлімшесі сенбі күні сағат бірге дейін жұмыс істейді.", "label": "бейтарап"}
-{"id": "snt_000076", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа смартфонымның камерасы керемет суретке түсіреді, өте ұнады!", "label": "оң"}
-{"id": "snt_000077", "task": "sentiment", "source": "seed", "validated": false, "text": "Кір жуатын машина бір жыл толмай жатып істен шықты, ашуым келді.", "label": "теріс"}
-{"id": "snt_000078", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа кір жуғыш машинаны өндіруші екі жылға кепілдік береді.", "label": "бейтарап"}
-{"id": "snt_000079", "task": "sentiment", "source": "seed", "validated": false, "text": "Әжемнің пісірген бауырсағы ерекше дәмді, балалық шағымды есіме түсірді, рахат!", "label": "оң"}
-{"id": "snt_000080", "task": "sentiment", "source": "seed", "validated": false, "text": "Мейрамханадағы ас дайын болғанша бір сағат күттік, өте ыза болдым.", "label": "теріс"}
-{"id": "snt_000081", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа ас мәзірі келесі аптадан бастап қолжетімді болады.", "label": "бейтарап"}
-{"id": "snt_000082", "task": "sentiment", "source": "seed", "validated": false, "text": "Театрдағы спектакль өте әсерлі болды, көрерменге терең әсер қалдырды!", "label": "оң"}
-{"id": "snt_000083", "task": "sentiment", "source": "seed", "validated": false, "text": "Билетті алдын ала алсам да орным басқа адамға берілген, мүлдем ренжідім.", "label": "теріс"}
-{"id": "snt_000084", "task": "sentiment", "source": "seed", "validated": false, "text": "Театр кассасы күн сайын сағат онда ашылады.", "label": "бейтарап"}
-{"id": "snt_000085", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа жұмыс орнымдағы ұжым өте достық, тез бейімделдім, бақыттымын!", "label": "оң"}
-{"id": "snt_000086", "task": "sentiment", "source": "seed", "validated": false, "text": "Жалақы тағы кешіктірілді, шотымдағы ақша таусылды, абыржып жүрмін.", "label": "теріс"}
-{"id": "snt_000087", "task": "sentiment", "source": "seed", "validated": false, "text": "Жалақы әр айдың бесінші күні аударылады.", "label": "бейтарап"}
-{"id": "snt_000088", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа диплом жұмысым жоғары бағаланды, көп еңбегім ақталды, қуаныштымын!", "label": "оң"}
-{"id": "snt_000089", "task": "sentiment", "source": "seed", "validated": false, "text": "Компьютер сабақ ортасында өшіп қалып, барлық жұмысым жоғалды, өте налыдым.", "label": "теріс"}
-{"id": "snt_000090", "task": "sentiment", "source": "seed", "validated": false, "text": "Кітапхананың электронды каталогы сайт арқылы қолжетімді.", "label": "бейтарап"}
-{"id": "snt_000091", "task": "sentiment", "source": "seed", "validated": false, "text": "Велосипедпен қала бойлап серуендеу керемет әсер сыйлады, көңілім көтерілді!", "label": "оң"}
-{"id": "snt_000092", "task": "sentiment", "source": "seed", "validated": false, "text": "Жөндеуге берген сағатымды жоғалтып алыпты, мұндай немқұрайдылыққа ашуландым.", "label": "теріс"}
-{"id": "snt_000093", "task": "sentiment", "source": "seed", "validated": false, "text": "Сервис орталығы жөндеуге орта есеппен үш жұмыс күнін бөледі.", "label": "бейтарап"}
-{"id": "snt_000094", "task": "sentiment", "source": "seed", "validated": false, "text": "Көршім ауырып қалғанда көмектескеніме шын жүректен алғыс айтты, жүрегім жылыды!", "label": "оң"}
-{"id": "snt_000095", "task": "sentiment", "source": "seed", "validated": false, "text": "Жаңа сатып алған пешім тағамды біркелкі қыздырмайды, ақшама өкінемін.", "label": "теріс"}
-{"id": "snt_000096", "task": "sentiment", "source": "seed", "validated": false, "text": "Электр пешінің пайдалану нұсқаулығы қорапта берілген.", "label": "бейтарап"}
-{"id": "snt_000097", "task": "sentiment", "source": "seed", "validated": false, "text": "Тауды бағындырып, шыңға шықтық, ғажап көрініске сүйсіндік, керемет күн болды!", "label": "оң"}
-{"id": "snt_000098", "task": "sentiment", "source": "seed", "validated": false, "text": "Жолда көлігім бұзылып, жарты күнді жол бойында өткіздім, әбден қажыдым.", "label": "теріс"}
-{"id": "snt_000099", "task": "sentiment", "source": "seed", "validated": false, "text": "Тау шаңғысы базасы желтоқсаннан наурызға дейін жұмыс істейді.", "label": "бейтарап"}
-{"id": "snt_000100", "task": "sentiment", "source": "seed", "validated": false, "text": "Ұзақ күткен сыйлығым бүгін жетті, қорапты ашқанда қуанышым қойныма сыймады!", "label": "оң"}
+{"id": "snt_000052", "task": "sentiment", "source": "community", "validated": false, "text": "Беттер риза қалдым", "label": "оң"}
+{"id": "snt_000053", "task": "sentiment", "source": "community", "validated": false, "text": "Спорт жақсы", "label": "оң"}
+{"id": "snt_000054", "task": "sentiment", "source": "community", "validated": false, "text": "Қозғалыс жағымды", "label": "оң"}
+{"id": "snt_000055", "task": "sentiment", "source": "community", "validated": false, "text": "Автобус жай ғана", "label": "бейтарап"}
+{"id": "snt_000056", "task": "sentiment", "source": "community", "validated": false, "text": "Актер ешқандай нәтижесі кереметті", "label": "оң"}
+{"id": "snt_000057", "task": "sentiment", "source": "community", "validated": false, "text": "Науқас дұрыс болды", "label": "оң"}
+{"id": "snt_000058", "task": "sentiment", "source": "community", "validated": false, "text": "Шоу жағымды", "label": "оң"}
+{"id": "snt_000059", "task": "sentiment", "source": "community", "validated": false, "text": "Сериал қалыпты", "label": "бейтарап"}
+{"id": "snt_000060", "task": "sentiment", "source": "community", "validated": false, "text": "Жеткізу орташа деңгейде", "label": "бейтарап"}
+{"id": "snt_000061", "task": "sentiment", "source": "community", "validated": false, "text": "Команда ең нашар", "label": "теріс"}
+{"id": "snt_000062", "task": "sentiment", "source": "community", "validated": false, "text": "Сюжет әлсіз", "label": "теріс"}
+{"id": "snt_000063", "task": "sentiment", "source": "community", "validated": false, "text": "Сапа орташа деңгейде", "label": "бейтарап"}
+{"id": "snt_000064", "task": "sentiment", "source": "community", "validated": false, "text": "Интерфейс әдеттегідей", "label": "бейтарап"}
+{"id": "snt_000065", "task": "sentiment", "source": "community", "validated": false, "text": "Фильм жөн саналады", "label": "оң"}
+{"id": "snt_000066", "task": "sentiment", "source": "community", "validated": false, "text": "Ас жақсы", "label": "оң"}
+{"id": "snt_000067", "task": "sentiment", "source": "community", "validated": false, "text": "Сервис ең нашар", "label": "теріс"}
+{"id": "snt_000068", "task": "sentiment", "source": "community", "validated": false, "text": "Режиссер жағымды", "label": "оң"}
+{"id": "snt_000069", "task": "sentiment", "source": "community", "validated": false, "text": "Өнім жөн саналады", "label": "оң"}
+{"id": "snt_000070", "task": "sentiment", "source": "community", "validated": false, "text": "Тексеру өте нашар", "label": "теріс"}
+{"id": "snt_000071", "task": "sentiment", "source": "community", "validated": false, "text": "Курс өте жақсы болды", "label": "оң"}
+{"id": "snt_000072", "task": "sentiment", "source": "community", "validated": false, "text": "Команда қарапайым", "label": "бейтарап"}
+{"id": "snt_000073", "task": "sentiment", "source": "community", "validated": false, "text": "Сервис күтілгендей", "label": "бейтарап"}
+{"id": "snt_000074", "task": "sentiment", "source": "community", "validated": false, "text": "Автор сапасыз", "label": "теріс"}
+{"id": "snt_000075", "task": "sentiment", "source": "community", "validated": false, "text": "Фильм жай ғана", "label": "бейтарап"}
+{"id": "snt_000076", "task": "sentiment", "source": "community", "validated": false, "text": "Навигация көңіл көншітпейді", "label": "теріс"}
+{"id": "snt_000077", "task": "sentiment", "source": "community", "validated": false, "text": "Беттер әлсіз", "label": "теріс"}
+{"id": "snt_000078", "task": "sentiment", "source": "community", "validated": false, "text": "Бөлме ештеңе айтарлық емес", "label": "бейтарап"}
+{"id": "snt_000079", "task": "sentiment", "source": "community", "validated": false, "text": "Сабақ тамаша деңгейде", "label": "оң"}
+{"id": "snt_000080", "task": "sentiment", "source": "community", "validated": false, "text": "Сапа толық қанағаттандырмады", "label": "теріс"}
+{"id": "snt_000081", "task": "sentiment", "source": "community", "validated": false, "text": "Спорт өте нашар", "label": "теріс"}
+{"id": "snt_000082", "task": "sentiment", "source": "community", "validated": false, "text": "Сюжет жөн саналады", "label": "оң"}
+{"id": "snt_000083", "task": "sentiment", "source": "community", "validated": false, "text": "Тексеру көңілден шықпады", "label": "теріс"}
+{"id": "snt_000084", "task": "sentiment", "source": "community", "validated": false, "text": "Қолданба ерекше емес", "label": "бейтарап"}
+{"id": "snt_000085", "task": "sentiment", "source": "community", "validated": false, "text": "Сабақ өте әлсіз", "label": "теріс"}
+{"id": "snt_000086", "task": "sentiment", "source": "community", "validated": false, "text": "Оқырман жай ғана", "label": "бейтарап"}
+{"id": "snt_000087", "task": "sentiment", "source": "community", "validated": false, "text": "Жарыс стандартты", "label": "бейтарап"}
+{"id": "snt_000088", "task": "sentiment", "source": "community", "validated": false, "text": "Маршрут орташа деңгейде", "label": "бейтарап"}
+{"id": "snt_000089", "task": "sentiment", "source": "community", "validated": false, "text": "Пайдалану әдеттегідей", "label": "бейтарап"}
+{"id": "snt_000090", "task": "sentiment", "source": "community", "validated": false, "text": "Бағасы қанағаттандырмады", "label": "теріс"}
+{"id": "snt_000091", "task": "sentiment", "source": "community", "validated": false, "text": "Стандартты функционал", "label": "бейтарап"}
+{"id": "snt_000092", "task": "sentiment", "source": "community", "validated": false, "text": "Қолданба қабылдай алмадым", "label": "теріс"}
+{"id": "snt_000093", "task": "sentiment", "source": "community", "validated": false, "text": "Жаңарту кемшіліктері бар", "label": "теріс"}
+{"id": "snt_000094", "task": "sentiment", "source": "community", "validated": false, "text": "Білім күткеніме сай келмеді", "label": "теріс"}
+{"id": "snt_000095", "task": "sentiment", "source": "community", "validated": false, "text": "Тапсырыс ерекше ұнады", "label": "оң"}
+{"id": "snt_000096", "task": "sentiment", "source": "community", "validated": false, "text": "Актерлердің ойыны тамаша", "label": "оң"}
+{"id": "snt_000097", "task": "sentiment", "source": "community", "validated": false, "text": "Оқырман қарапайым", "label": "бейтарап"}
+{"id": "snt_000098", "task": "sentiment", "source": "community", "validated": false, "text": "Ас ерекше ұнады", "label": "оң"}
+{"id": "snt_000099", "task": "sentiment", "source": "community", "validated": false, "text": "Жаңарту жай ғана", "label": "бейтарап"}
+{"id": "snt_000100", "task": "sentiment", "source": "community", "validated": false, "text": "Материал көңілден шықпады", "label": "теріс"}
