@@ -157,12 +157,13 @@ def make_app():  # type: ignore[return]
     """Build and return the Gradio Blocks app. Import gradio lazily."""
     try:
         import gradio as gr  # type: ignore[import-untyped]
-    except ImportError:
+    except ImportError as exc:
         print(
-            "[ERROR] gradio is not installed. Run: pip install gradio",
+            f"[ERROR] failed to import gradio: {exc!r}. "
+            "Install with: pip install gradio",
             file=sys.stderr,
         )
-        sys.exit(1)
+        raise
 
     def refresh_table() -> Any:
         rows = load_results()
@@ -194,7 +195,7 @@ Ranks LLM models on **Kazakh-language** AI tasks.
 
 > **Provisional (DEV split):** Scores come from the public DEV set.
 > Official rankings require private TEST verification by a maintainer.
-> See [CONTRIBUTING.md](https://github.com/kazbench/kazbench) to submit.
+> See [CONTRIBUTING.md](https://github.com/Yersultan04/kazbench) to submit.
             """
         )
 
@@ -213,8 +214,8 @@ Ranks LLM models on **Kazakh-language** AI tasks.
 
         gr.Markdown(
             "*KazBench — the standard benchmark for Kazakh-language AI. "
-            "[GitHub](https://github.com/kazbench/kazbench) | "
-            "[HF Datasets](https://huggingface.co/datasets/kazbench/kazbench)*"
+            "[GitHub](https://github.com/Yersultan04/kazbench) | "
+            "[HF Datasets](https://huggingface.co/datasets/Yersultan03/kazbench)*"
         )
 
     return app
