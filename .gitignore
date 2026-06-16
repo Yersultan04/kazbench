@@ -11,3 +11,6 @@ benchmark/test/
 
 # track baseline result JSONs (leaderboard data); ignore bulky per-item preds
 results/preds/
+
+# HF publish staging (built artifacts, not source)
+build/

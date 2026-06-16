@@ -38,9 +38,12 @@ MAX_RESULT_FILE_BYTES: int = 1 * 1024 * 1024  # 1 MB
 
 # ── Resolve paths ──────────────────────────────────────────────────────────────
 
-# When running as HF Space or locally, repo root is one level up from this file.
-REPO_ROOT = Path(__file__).parent.parent
-RESULTS_DIR = REPO_ROOT / "results"
+# Resolve the results directory robustly: works whether app.py runs from
+# leaderboard/ (repo layout) or sits at the root of an HF Space alongside results/.
+_HERE = Path(__file__).parent
+_RESULT_CANDIDATES = (_HERE / "results", _HERE.parent / "results")
+RESULTS_DIR = next((p for p in _RESULT_CANDIDATES if p.is_dir()), _RESULT_CANDIDATES[0])
+REPO_ROOT = RESULTS_DIR.parent
 
 # ── Task definitions ───────────────────────────────────────────────────────────
 
