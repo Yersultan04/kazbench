@@ -17,7 +17,7 @@ Contact: [EMAIL TBD]
 
 ## Abstract
 
-We introduce **KazBench**, an open benchmark for evaluating large language models (LLMs) on the Kazakh language — a Turkic language spoken by approximately 13 million people that remains severely under-represented in LLM evaluation literature. Despite growing community efforts in Kazakh NLP, no standardized, reproducible evaluation suite exists that enables direct, cross-model comparison across a broad set of language capabilities. KazBench fills this gap with six tasks covering factual knowledge, reading comprehension, morphological grammar, sentiment classification, translation (KK→EN and KK→RU), and open-ended instruction following. We release a model-agnostic evaluation harness, a public DEV split, a private TEST split for leaderboard integrity, and a decentralized submission protocol that scales without API costs to the project. A public leaderboard tracks model performance over time. The current DEV split (v0.1.0) contains **296 items** (~49–51 per task), all native-validated by a fluent Kazakh-speaking reviewer. We report baselines on two open-weight models served via Groq: `meta-llama/llama-4-scout-17b-16e-instruct` (overall **87.53/100**) and `llama-3.1-8b-instant` (overall **64.94/100**), plus a dummy floor of **22.97/100** for harness verification. All code, data, and the live leaderboard are publicly available (see artifact links above). We release all artifacts under MIT (code) and CC BY 4.0 (data) licenses.
+We introduce **KazBench**, an open benchmark for evaluating large language models (LLMs) on the Kazakh language — a Turkic language spoken by approximately 13 million people that remains severely under-represented in LLM evaluation literature. Despite growing community efforts in Kazakh NLP, no standardized, reproducible evaluation suite exists that enables direct, cross-model comparison across a broad set of language capabilities. KazBench fills this gap with six tasks covering factual knowledge, reading comprehension, morphological grammar, sentiment classification, translation (KK→EN and KK→RU), and open-ended instruction following. We release a model-agnostic evaluation harness, a public DEV split, a private TEST split for leaderboard integrity, and a decentralized submission protocol that scales without API costs to the project. A public leaderboard tracks model performance over time. The current DEV split (v0.1.0) contains **296 items** (~49–51 per task), all native-validated by a fluent Kazakh-speaking reviewer. We report baselines on six models spanning frontier closed-source and open-weight: `anthropic/claude-3.5-haiku` (**91.50/100**), `openai/gpt-4o-mini` (**88.30/100**), `meta-llama/llama-4-scout-17b-16e-instruct` (**87.53/100**), `google/gemini-2.5-flash` (**84.15/100**), `qwen/qwen-2.5-72b-instruct` (**74.54/100**), and `llama-3.1-8b-instant` (**64.94/100**), plus a dummy floor of **22.97/100** for harness verification. All code, data, and the live leaderboard are publicly available (see artifact links above). We release all artifacts under MIT (code) and CC BY 4.0 (data) licenses.
 
 ---
 
@@ -276,24 +276,29 @@ The leaderboard is a Gradio app (`leaderboard/app.py`) hosted on Hugging Face Sp
 
 ### 6.1 Baseline Results (DEV split, v0.1.0, native-validated)
 
-We report results for three systems on the fully native-validated DEV split (296 items): two open-weight models served via a Groq-hosted OpenAI-compatible endpoint and an offline dummy baseline for harness verification. Results for `qwen3-32b` and `llama-3.3-70b-versatile` are pending (free-tier token limits); they will be added in a subsequent update.
+We report results for seven systems on the fully native-validated DEV split (296 items): six real models spanning frontier closed-source and open-weight, plus an offline dummy baseline for harness verification. Models were served via OpenRouter (frontier) and Groq (open-weight) OpenAI-compatible endpoints. A Llama-70B-class baseline (e.g., `llama-3.3-70b-versatile`) remains pending due to free-tier token limits and will be added in a subsequent update.
 
 **DEV leaderboard (v0.1.0):**
 
 | Rank | Model | Overall | KMC (acc%) | RC (acc%) | GM (acc%) | Sent (acc%) | Trans (chrF) | IF (judge%) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | meta-llama/llama-4-scout-17b-16e-instruct | **87.53** | 96.0 | 87.5 | 87.5 | 100.0 | 92.12 | 62.04 |
-| 2 | llama-3.1-8b-instant | **64.94** | 72.0 | 95.83 | 77.08 | 60.78 | 26.41 | 57.55 |
-| 3 | dummy (floor) | **22.97** | — | — | — | — | — | — |
+| 1 | anthropic/claude-3.5-haiku | **91.50** | 96.0 | 100.0 | 97.9 | 88.2 | 86.12 | 80.71 |
+| 2 | openai/gpt-4o-mini | **88.30** | 96.0 | 100.0 | 91.7 | 96.1 | 92.27 | 53.78 |
+| 3 | meta-llama/llama-4-scout-17b-16e-instruct | **87.53** | 96.0 | 87.5 | 87.5 | 100.0 | 92.12 | 62.04 |
+| 4 | google/gemini-2.5-flash | **84.15** | 90.0 | 100.0 | 91.7 | 100.0 | 88.23 | 35.00 |
+| 5 | qwen/qwen-2.5-72b-instruct | **74.54** | 88.0 | 97.9 | 75.0 | 84.3 | 79.84 | 22.14 |
+| 6 | llama-3.1-8b-instant | **64.94** | 72.0 | 95.8 | 77.1 | 60.8 | 26.41 | 57.55 |
+| — | dummy (floor) | **22.97** | 26.0 | 25.0 | 25.0 | 33.3 | 8.50 | 20.00 |
 
 *KMC = knowledge_mc, RC = reading_comprehension, GM = grammar_morphology, Sent = sentiment, Trans = translation, IF = instruction_following.*
 
-The benchmark discriminates clearly across capability levels (Scout 87.53 vs. Llama-8B 64.94 vs. dummy floor 22.97). Key observations:
+The benchmark discriminates clearly across the full range of evaluated models (claude-3.5-haiku 91.50 → llama-3.1-8b 64.94 → dummy floor 22.97). Key observations:
 
-- **Translation is the sharpest discriminator.** chrF 92.12 vs. 26.41 — a ~3.5× gap — shows that translation quality scales strongly with model size and multilingual training.
-- **Instruction-following is hard for both.** Both models cluster around 57–62%, reflecting genuine difficulty in understanding and complying with instructions written in Kazakh.
-- **Sentiment is a strength for Scout.** 100% accuracy on 51 items, compared to 60.78% for the smaller model.
-- **Reading comprehension is a relative strength for Llama-8B** (95.83%), narrowly outperforming Scout (87.5%) — likely a prompt-sensitivity artifact at this item count.
+- **Frontier models lead overall.** claude-3.5-haiku (91.50) and gpt-4o-mini (88.30) top the leaderboard, with llama-4-scout (87.53) and gemini-2.5-flash (84.15) close behind. qwen-2.5-72b (74.54) and llama-3.1-8b (64.94) form a second tier.
+- **Reading comprehension is saturated at the top.** Three of six models score 100.0% on RC (claude-3.5-haiku, gpt-4o-mini, gemini-2.5-flash), suggesting the current item set is too easy for frontier models; harder items are needed for v1.
+- **Instruction-following has the widest spread.** IF scores range from 22.14 (qwen-2.5-72b) to 80.71 (claude-3.5-haiku), making it the most discriminative task at the top end. The earlier "cluster around 57–62%" observation was an artifact of evaluating only two open-weight models.
+- **Translation (chrF) correlates with overall rank except for gpt-4o-mini.** The chrF range is 26.41 (llama-3.1-8b) to 92.27 (gpt-4o-mini); notably gpt-4o-mini achieves the highest chrF (92.27) despite ranking second overall, dragged down by its IF score (53.78).
+- **Sentiment is easy for most frontier models.** gemini-2.5-flash and llama-4-scout both reach 100.0%; claude-3.5-haiku scores 88.2% and llama-3.1-8b 60.8%, the widest gap after IF.
 
 ### 6.1b Methodology validation: the evaluation caught its own bug
 
@@ -311,11 +316,11 @@ The dummy adapter returns a fixed deterministic response per task type (index `"
 
 ### 6.3 Planned Additional Baselines
 
-We plan to run and report results for a broader set of models including:
+The current baseline set covers frontier closed-source (claude-3.5-haiku, gpt-4o-mini, gemini-2.5-flash) and open-weight (llama-4-scout-17b, qwen-2.5-72b, llama-3.1-8b) models. Planned additions include:
 
-- Frontier closed-source models with known multilingual support (GPT-4o, Claude, Gemini variants) [CITE: model technical reports]
-- Open-source multilingual models with Turkic or Central-Asian language coverage [CITE: relevant model papers]
+- A Llama-70B-class model (e.g., `llama-3.3-70b-versatile`) pending free-tier token availability [CITE: model technical reports]
 - Kazakh-specific fine-tuned models, if available [CITE: community Kazakh model efforts]
+- Re-runs on the expanded DEV split (100 validated items/task) once v1 data is complete
 
 Results will be added to the public leaderboard (https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard) as they become available and reported in a subsequent version of this paper.
 
@@ -325,11 +330,11 @@ Results will be added to the public leaderboard (https://huggingface.co/spaces/Y
 
 ### 7.1 Dataset Size
 
-The v0.1.0 DEV split contains ~49–51 items per task (296 total), all native-validated. This is sufficient to discriminate strong from weak models (§6.1) but still too small for statistically tight per-task estimates: a few items can swing a 50-item accuracy by several percentage points, and we do not yet report confidence intervals. The target for v1 is 100 items per task. The private TEST split has not yet been populated; leaderboard scores are currently DEV-only and should be treated as indicative rather than definitive until TEST verification is in place.
+The v0.1.0 DEV split contains 48–51 items per task (50/48/48/51/50/49 for KMC/RC/GM/Sent/Trans/IF respectively; 296 total), all native-validated. This is sufficient to discriminate strong from weak models (§6.1) but still too small for statistically tight per-task estimates: a few items can swing a 50-item accuracy by several percentage points, and we do not yet report confidence intervals. The target for v1 is 100 items per task. The private TEST split has not yet been populated; leaderboard scores are currently DEV-only and should be treated as indicative rather than definitive until TEST verification is in place.
 
 ### 7.2 Coverage of Additional Models
 
-Only two real models have been evaluated to date. Frontier closed-source models (GPT-4o, Claude, Gemini) and larger open-weight models have not yet been run. The current leaderboard therefore does not represent the full range of model capability on Kazakh.
+Six real models have been evaluated to date, including frontier closed-source models (claude-3.5-haiku, gpt-4o-mini, gemini-2.5-flash) and open-weight models (llama-4-scout-17b, qwen-2.5-72b, llama-3.1-8b). The leaderboard now spans a meaningful range of capability. The primary gap remaining is a Llama-70B-class baseline (e.g., `llama-3.3-70b-versatile`) and a full re-run once the DEV split is expanded to 100 items per task.
 
 ### 7.3 Prompt Script (resolved)
 
@@ -390,7 +395,7 @@ The benchmark was designed by a non-native Kazakh speaker with AI-assisted gener
 
 KazBench provides the first publicly available, multi-task, reproducible evaluation suite for assessing LLM performance on the Kazakh language. By releasing a model-agnostic harness, a native-validated DEV split, a live public leaderboard, and an open contribution pipeline, we aim to make KazBench community-maintained infrastructure rather than a one-time research artifact.
 
-As of v0.1.0, the benchmark is fully operational: 296 native-validated items across six tasks, two open-weight model baselines (Scout 87.53, Llama-8B 64.94), and all artifacts publicly available at https://github.com/Yersultan04/kazbench and https://huggingface.co/datasets/Yersultan03/kazbench. The most critical near-term work is expanding each task to 100+ items, populating the private TEST split, and broadening model coverage to include frontier closed-source models. We invite the Kazakh NLP community to contribute items and submit model results via GitHub.
+As of v0.1.0, the benchmark is fully operational: 296 native-validated items across six tasks, six model baselines spanning frontier and open-weight (claude-3.5-haiku 91.50 → llama-3.1-8b 64.94), and all artifacts publicly available at https://github.com/Yersultan04/kazbench and https://huggingface.co/datasets/Yersultan03/kazbench. The most critical near-term work is expanding each task to 100 validated items, populating the private TEST split, and adding a Llama-70B-class baseline. We invite the Kazakh NLP community to contribute items and submit model results via GitHub.
 
 ---
 

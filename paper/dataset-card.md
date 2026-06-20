@@ -10,7 +10,7 @@ KazBench is an open, multi-task evaluation benchmark for assessing large languag
 
 KazBench provides a public DEV split for local development and a private TEST split whose scores constitute the official leaderboard entries. See the [GitHub repository](https://github.com/[ORG]/kazbench) for the evaluation harness and submission protocol.
 
-**Current status: v0.1 seed data — small, unvalidated, not suitable for headline capability claims.**
+**Current status: v0.1.0 — DEV split native-validated (296/600 items validated, 304 pending expansion); private TEST split 180 items (6 tasks × 30). DEV scores are indicative; treat as development-phase results until TEST verification is in place.**
 
 ---
 
@@ -29,7 +29,7 @@ KazBench provides a public DEV split for local development and a private TEST sp
 
 ### Dataset Sources
 
-The v0.1 seed data was generated with AI assistance to bootstrap the harness infrastructure. It has not been reviewed by native Kazakh speakers. Future data will be sourced from:
+The v0.1.0 data was generated with AI assistance and subsequently reviewed by a fluent native Kazakh speaker via Google Sheet. 296 of 600 DEV items are fully validated (`validated: true`); 304 items remain pending expansion and review. Additional data will be sourced from:
 
 - Native-authored items written by fluent Kazakh speakers
 - Publicly available Kazakhstani standardized exam materials (ҰБТ/UNT) with provenance labeling
@@ -52,7 +52,7 @@ python -m harness.run_eval --model claude --model-id claude-haiku-4-5-20251001 -
 ### Out-of-Scope Use
 
 - **Fine-tuning on the test set** — the TEST split is private and must not be used for training. Fine-tuning on the DEV split and then reporting DEV scores as a model capability claim is considered dishonest practice and violates the spirit of the benchmark.
-- **As a gold-standard capability measure (v0.1 only)** — the seed data is too small and unvalidated for reliable model ranking. Do not cite v0.1 seed scores in papers or product comparisons.
+- **As a gold-standard capability measure (v0.1 only)** — the DEV split has 48–51 validated items per task, which is sufficient for indicative ranking but not for statistically tight claims. Do not cite v0.1.0 DEV scores as definitive capability measures; await TEST-verified leaderboard results.
 - **Content generation for production systems** — KazBench items are evaluation items, not templates for downstream text generation.
 
 ---
@@ -122,19 +122,20 @@ python -m harness.run_eval --model claude --model-id claude-haiku-4-5-20251001 -
 
 The TEST split follows the identical schema as DEV. It is never committed to the public repository.
 
-### Dataset Size (v0.1 seed)
+### Dataset Size (v0.1.0)
 
-| Task | DEV items | Validated | Split balance |
-|---|---|---|---|
-| knowledge_mc | 18 | 0 (0%) | 1 canary item |
-| reading_comprehension | 16 | 0 (0%) | 1 canary item |
-| grammar_morphology | 16 | 0 (0%) | 1 canary item |
-| sentiment | 18 | 0 (0%) | 1 canary item |
-| translation | 18 | 0 (0%) | ~9 KK→EN, ~9 KK→RU; 1 canary item |
-| instruction_following | 16 | 0 (0%) | 1 canary item |
-| **Total** | **102** | **0** | — |
+| Task | DEV items | Validated | Pending | Split balance |
+|---|---|---|---|---|
+| knowledge_mc | 100 | 50 (50%) | 50 | 1 canary item |
+| reading_comprehension | 100 | 48 (48%) | 52 | 1 canary item |
+| grammar_morphology | 100 | 48 (48%) | 52 | 1 canary item |
+| sentiment | 100 | 51 (51%) | 49 | 1 canary item |
+| translation | 100 | 50 (50%) | 50 | ~50 KK→EN, ~50 KK→RU; 1 canary item |
+| instruction_following | 100 | 49 (49%) | 51 | 1 canary item |
+| **Total DEV** | **600** | **296 (49%)** | **304** | — |
+| **TEST (private)** | **180** | — | — | 30 items/task; maintainers only |
 
-**Target after v1 validation:** 100+ validated items per task, split approximately 50/50 between DEV and TEST.
+**Target for v1:** 100+ validated items per task in DEV; TEST to be expanded proportionally.
 
 ---
 
@@ -146,7 +147,7 @@ Kazakh is a low-resource language for LLMs despite having approximately 13 milli
 
 ### Source Data
 
-**v0.1 seed:** AI-generated items designed to represent the intended task formats and difficulty levels. Language: Cyrillic Kazakh. Content domain: general knowledge, cultural facts, simple everyday scenarios.
+**v0.1.0:** AI-generated items reviewed and validated by a fluent native Kazakh speaker. Language: Cyrillic Kazakh. Content domain: general knowledge, cultural facts, simple everyday scenarios. 296 items carry `validated: true`; 304 are pending further review and expansion to 100 items/task.
 
 **Future sources planned:**
 - Native-authored items from fluent Kazakh speakers (recruited via community outreach)
@@ -155,8 +156,8 @@ Kazakh is a low-resource language for LLMs despite having approximately 13 milli
 
 #### Who are the source data producers?
 
-v0.1: AI system with human oversight (not reviewed by native speakers — acknowledged limitation).
-Future: Native Kazakh speakers recruited from the community.
+v0.1.0: AI system with native-speaker oversight. A fluent Kazakh speaker reviewed and validated 296 of 600 DEV items.
+Future: Additional native Kazakh speakers recruited from the community for expansion to 100+ items/task.
 
 ### Annotations
 
@@ -174,8 +175,8 @@ For `instruction_following`: a natural-language rubric string specifies the scor
 
 #### Who are the annotators?
 
-v0.1: No human annotators — items are unvalidated seed data.
-Target: Recruited native Kazakh speakers serving as reviewers.
+v0.1.0: One fluent native Kazakh speaker validated 296 DEV items via Google Sheet review.
+Target: Two-reviewer native-speaker validation for all items (PR-based, per §4.2 of the paper).
 
 ### Personal and Sensitive Information
 
@@ -190,7 +191,7 @@ None. The dataset contains no personal information, no individually identifiable
 - **Generator bias (v0.1):** Items were AI-generated and may reflect biases in the generating model's understanding of Kazakh language and culture, including potential inaccuracies in morphology or cultural references.
 - **Script bias:** All items use Cyrillic Kazakh. Models trained predominantly on Latin-script Kazakh (post-reform) may be disadvantaged.
 - **Domain imbalance:** v0.1 items are general-domain. Specialized domains (legal, medical, technical, administrative) are absent.
-- **Answer-index skew (grammar_morphology):** In the v0.1 seed, the correct answer is at index 0 for all grammar items. This will be corrected during validation. This makes grammar_morphology dummy-baseline scores misleading.
+- **Answer-index skew (grammar_morphology):** In the v0.1 seed, the correct answer was at index 0 for all grammar items. This has been corrected — answer positions are now randomized evenly across choices (see paper §6.2). The dummy-baseline grammar score reflects the corrected distribution.
 
 ### Risks
 
@@ -200,7 +201,7 @@ None. The dataset contains no personal information, no individually identifiable
 
 ### Limitations
 
-- **Size:** 16–18 items per task is insufficient for reliable model differentiation. Statistical significance between models requires substantially more items.
+- **Size:** 48–51 validated items per task is sufficient for indicative model differentiation but not for statistically tight per-task estimates (a few items can swing accuracy by several points). Confidence intervals are not yet reported. The target for v1 is 100+ items per task.
 - **Single reference translation:** Single-reference chrF underestimates translation quality when multiple valid translations exist.
 - **LLM judge reliability:** The `instruction_following` scorer uses an LLM judge whose scores have not been validated against human judgments.
 - **No difficulty tiers:** All v0.1 items are at approximately A1–B1 difficulty. Harder items for native-speaker-level capability are absent.
@@ -257,5 +258,5 @@ For native-speaker validation contributions, see `CONTRIBUTING.md` in the reposi
 
 | Version | Date | Description |
 |---|---|---|
-| 0.1.0 | June 2026 | Initial seed release — AI-generated items, harness functional, all items unvalidated |
+| 0.1.0 | June 2026 | DEV split 600 items (6×100), 296 native-validated; private TEST 180 items (6×30); 6 model baselines + dummy floor published |
 | 1.0.0 | TBD | First validated release — 100+ items/task, native-speaker reviewed, real model baselines |
