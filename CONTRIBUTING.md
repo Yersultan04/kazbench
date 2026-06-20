@@ -103,6 +103,22 @@ counted as "headline" quality until two natives confirm them.
 
 ---
 
+## 4b. Model submissions → official leaderboard (TEST verification)
+
+Leaderboard scores you submit on the public DEV split are **provisional**. To become
+**official**, a maintainer re-runs your model on the private TEST split:
+
+1. Submitter: run eval on DEV, then `python tools/verify_submission.py results/<model>.json`
+   (schema gate) and open a PR with the result JSON.
+2. Maintainer: `python tools/verify_on_test.py --model <adapter> --model-id <id> --submission results/<model>.json`
+   — re-runs on the private TEST split, compares DEV→TEST, and appends a row to
+   `results/SUBMISSION_LEDGER.md` (append-only anti-gaming audit trail).
+3. Anti-gaming verdict: a normal model **drops** from DEV to held-out TEST. TEST > DEV
+   (or a near-zero drop) is **flagged** as possible DEV contamination / overfitting.
+4. Only `✅ VERIFIED` entries are added to the official leaderboard with `verified_on_test:true`.
+
+---
+
 ## 5. Quick checklist before you submit
 
 - [ ] One JSON object per line, valid JSONL.
