@@ -58,6 +58,28 @@ python -m harness.run_eval --model claude --model-id claude-haiku-4-5-20251001 -
 
 *Provisional (public DEV). Live, always-current table: [HF Space leaderboard](https://huggingface.co/spaces/Yersultan03/kazbench-leaderboard). Instruction-following (IF) uses a self-judge — treat as soft.*
 
+> ⚠️ **Read this before trusting the numbers.** These DEV scores are **inflated by
+> synthetic items** and are *indicative, not official*. Official rankings require
+> verification on the private TEST set (see [Design](#design)). We measured the gap
+> directly — see below.
+
+## ⚡ The synthetic ceiling (why these scores are a starting point, not the verdict)
+
+We built KazBench's seed items synthetically, then validated them against **real Kazakh
+exam questions (ЕНТ)** and real human reviews. Strong models collapse on the real data:
+
+| Task | Synthetic (our seed) | Real human-sourced | Δ |
+|---|---|---|---|
+| `knowledge_mc` (gpt-4o-mini) | 96.0% | **50.0%** (real ЕНТ) | **−46 pts** |
+| `sentiment` (gpt-4o-mini) | 96.1% | 87.8% (real reviews) | −8 pts |
+
+A −46-point drop means the synthetic set was **saturated** — it stopped discriminating
+between models. Real exam data restores difficulty. This is the core reason KazBench is
+moving to human-sourced items (real ЕНТ, KazSAnDRA reviews, KazCulture) and holds out a
+private TEST split. **Expect every model on the table above to drop substantially once
+the real-data leaderboard ships.** Methodology and sources:
+[`docs/data-sources.md`](docs/data-sources.md).
+
 ## Tasks (v1)
 
 | Task | Measures | Metric |
