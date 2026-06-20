@@ -6,12 +6,19 @@ Usage:
     python -m harness.run_eval --model claude --split dev --out results/claude.json
     python -m harness.run_eval --model openai --model-id llama3 --split dev --out results/llama3.json
 
+Reproducibility flags:
+    --validated-only      Evaluate only items with validated=true (default: True).
+    --all-items           Override --validated-only; evaluate all items regardless.
+    --temperature FLOAT   Sampling temperature logged in run metadata (default: 0.0).
+    --seed INT            Random seed logged in run metadata (default: 42).
+
 All console output uses ASCII-safe characters only (Windows cp1251 safe).
 """
 
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import logging
 import re
@@ -321,16 +328,34 @@ def write_results(
     adapter_name: str,
     split: str,
     task_results: dict[str, dict],
+    *,
+    validated_only: bool = True,
+    temperature: float = 0.0,
+    seed: int = 42,
 ) -> None:
     """Write results JSON in the schema.md format."""
     # Create only the immediate parent directory (no deep auto-create)
     out_path.parent.mkdir(exist_ok=True)
+
+    # Aggregate reproducibility metadata across tasks
+    n_total_all = sum(info.get("n_total", info["n"]) for info in task_results.values())
+    n_validated_all = sum(info.get("n_validated", info["n"]) for info in task_results.values())
+
     payload = {
         "model": model_label,
         "adapter": adapter_name,
         "kazbench_version": __version__,
         "split": split,
         "overall": round(_overall_score(task_results), 4),
+        # --- run metadata for reproducibility ---
+        "run_metadata": {
+            "validated_only": validated_only,
+            "n_total": n_total_all,
+            "n_validated": n_validated_all,
+            "temperature": temperature,
+            "seed": seed,
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        },
         "tasks": {
             task: {
                 "metric": info["metric"],
@@ -390,6 +415,34 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="Optional path to dump per-item predictions JSON (for council triage).",
     )
+
+    # --- Reproducibility flags ---
+    validated_group = parser.add_mutually_exclusive_group()
+    validated_group.add_argument(
+        "--validated-only",
+        dest="validated_only",
+        action="store_true",
+        default=True,
+        help="Evaluate only items with validated=true (default behaviour).",
+    )
+    validated_group.add_argument(
+        "--all-items",
+        dest="validated_only",
+        action="store_false",
+        help="Evaluate all items regardless of validated flag.",
+    )
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=0.0,
+        help="Sampling temperature (logged in run metadata, default: 0.0).",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help="Random seed (logged in run metadata, default: 42).",
+    )
     return parser.parse_args(argv)
 
 
@@ -447,23 +500,38 @@ def main(argv: list[str] | None = None) -> int:
                 continue
 
         # Load items
-        items: list[dict] = []
+        all_items: list[dict] = []
         with task_file.open(encoding="utf-8-sig") as f:  # utf-8-sig strips BOM if present
             for lineno, line in enumerate(f, 1):
                 line = line.strip()
                 if not line:
                     continue
                 try:
-                    items.append(json.loads(line))
+                    all_items.append(json.loads(line))
                 except json.JSONDecodeError as exc:
                     print(
                         f"[kazbench] WARNING: {task_file}:{lineno} -- "
                         f"invalid JSON ({exc}), skipping line."
                     )
 
-        n = len(items)
-        print(f"[kazbench] Task={task_name}  n={n}  ...", end="", flush=True)
+        n_total = len(all_items)
+        if args.validated_only:
+            items = [it for it in all_items if it.get("validated") is True]
+        else:
+            items = all_items
+        n_validated = sum(1 for it in all_items if it.get("validated") is True)
+
+        print(
+            f"[kazbench] Task={task_name}  "
+            f"total={n_total}  validated={n_validated}  "
+            f"evaluating={len(items)}  ...",
+            end="",
+            flush=True,
+        )
         result = evaluate_task(task_name, items, model, predictions=all_predictions)
+        # Attach per-task reproducibility counts for write_results aggregation
+        result["n_total"] = n_total
+        result["n_validated"] = n_validated
         metric = result["metric"]
         score = result["score"]
         if metric in ("accuracy", "judge"):
@@ -474,7 +542,16 @@ def main(argv: list[str] | None = None) -> int:
         task_results[task_name] = result
 
     # Write output
-    write_results(out_path, model_label, args.model, args.split, task_results)
+    write_results(
+        out_path,
+        model_label,
+        args.model,
+        args.split,
+        task_results,
+        validated_only=args.validated_only,
+        temperature=args.temperature,
+        seed=args.seed,
+    )
 
     if all_predictions is not None:
         pred_path = Path(args.save_predictions).resolve()

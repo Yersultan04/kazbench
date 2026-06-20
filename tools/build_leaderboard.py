@@ -115,6 +115,16 @@ def build_row(data: dict[str, Any]) -> dict[str, str]:
     version: str = data.get("kazbench_version", "?")
     tasks: dict[str, Any] = data.get("tasks", {})
 
+    # Reproducibility metadata (present in results written after P0 fix)
+    run_meta: dict[str, Any] = data.get("run_metadata", {})
+    n_validated: int | str = run_meta.get("n_validated", "?")
+    validated_only: bool | None = run_meta.get("validated_only")
+    # Display "N*" when validated_only=False to flag non-canonical runs
+    if validated_only is False:
+        n_validated_str = f"{n_validated}*"
+    else:
+        n_validated_str = str(n_validated)
+
     task_scores: dict[str, str] = {}
     for task in TASK_ORDER:
         if task in tasks:
@@ -129,6 +139,7 @@ def build_row(data: dict[str, Any]) -> dict[str, str]:
         "overall": overall,
         "overall_str": f"{overall:.2f}",
         "version": _md_escape(version),
+        "n_validated": n_validated_str,
         "task_scores": task_scores,  # type: ignore[dict-item]
     }
 
@@ -158,19 +169,22 @@ def build_leaderboard_md(rows: list[dict[str, Any]], date_str: str) -> str:
 
     # Table header
     task_cols = [TASK_LABELS[t] for t in TASK_ORDER]
-    header = ["Rank", "Model", "Split", "Overall"] + task_cols + ["Version"]
-    separator = ["----", "-----", "-----", "-------"] + ["----"] * len(task_cols) + ["-------"]
+    header = ["Rank", "Model", "Split", "Overall", "N (val)"] + task_cols + ["Version"]
+    separator = ["----", "-----", "-----", "-------", "-------"] + ["----"] * len(task_cols) + ["-------"]
     lines.append(md_table_row(header))
     lines.append(md_table_row(separator))
 
     for rank, row in enumerate(rows, start=1):
         task_scores: dict[str, str] = row["task_scores"]
         cells = (
-            [str(rank), row["model"], row["split"], row["overall_str"]]
+            [str(rank), row["model"], row["split"], row["overall_str"], row.get("n_validated", "?")]
             + [task_scores[t] for t in TASK_ORDER]
             + [row["version"]]
         )
         lines.append(md_table_row(cells))
+
+    lines.append("")
+    lines.append("\\* N (val) marked with `*` indicates run was not restricted to validated items only.")
 
     lines.append("")
     lines.append(f"*Generated: {date_str}*")

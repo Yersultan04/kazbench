@@ -240,6 +240,30 @@ class TestRunEval:
     def test_split_is_dev(self, results_json):
         assert results_json["split"] == "dev"
 
+    def test_has_run_metadata(self, results_json):
+        """run_metadata block must be present with reproducibility fields."""
+        assert "run_metadata" in results_json, "Missing 'run_metadata' key"
+        meta = results_json["run_metadata"]
+        for key in ("validated_only", "n_total", "n_validated", "temperature", "seed", "timestamp"):
+            assert key in meta, f"run_metadata missing '{key}'"
+
+    def test_run_metadata_validated_only_default_true(self, results_json):
+        """Default run (no --all-items) must have validated_only=True."""
+        assert results_json["run_metadata"]["validated_only"] is True
+
+    def test_run_metadata_counts_sane(self, results_json):
+        """n_validated <= n_total."""
+        meta = results_json["run_metadata"]
+        assert meta["n_validated"] <= meta["n_total"]
+
+    def test_run_metadata_timestamp_format(self, results_json):
+        """timestamp must be ISO 8601 UTC string."""
+        import re
+        ts = results_json["run_metadata"]["timestamp"]
+        assert re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", ts), (
+            f"timestamp '{ts}' does not match YYYY-MM-DDTHH:MM:SSZ"
+        )
+
     def test_overall_matches_tasks(self, results_json):
         """Overall should be macro-average of per-task scores scaled to [0,100]."""
         tasks = results_json.get("tasks", {})
@@ -253,6 +277,43 @@ class TestRunEval:
                 values.append(info["score"] * 100.0)
         expected = sum(values) / len(values) if values else 0.0
         assert results_json["overall"] == pytest.approx(expected, abs=0.01)
+
+
+# ===========================================================================
+# 3b. run_eval --all-items flag
+# ===========================================================================
+
+class TestRunEvalAllItems:
+    """Verify --all-items overrides validated_only and n_total >= n_validated."""
+
+    @pytest.fixture(scope="class")
+    def results_all(self, tmp_path_factory):
+        out = tmp_path_factory.mktemp("results_all") / "dummy_all.json"
+        proc = subprocess.run(
+            [
+                sys.executable, "-m", "harness.run_eval",
+                "--model", "dummy",
+                "--split", "dev",
+                "--all-items",
+                "--out", str(out),
+            ],
+            capture_output=True,
+            text=True,
+            cwd=str(REPO_ROOT),
+        )
+        assert proc.returncode == 0, (
+            f"run_eval --all-items exited {proc.returncode}\n"
+            f"STDOUT:\n{proc.stdout}\n"
+            f"STDERR:\n{proc.stderr}"
+        )
+        return json.loads(out.read_text(encoding="utf-8"))
+
+    def test_validated_only_is_false(self, results_all):
+        assert results_all["run_metadata"]["validated_only"] is False
+
+    def test_n_total_gte_n_validated(self, results_all):
+        meta = results_all["run_metadata"]
+        assert meta["n_total"] >= meta["n_validated"]
 
 
 # ===========================================================================
