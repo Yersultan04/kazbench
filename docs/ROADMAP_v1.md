@@ -32,6 +32,28 @@ KazBench v1.0 — **достоверный, опубликованный, зап
 
 ---
 
+## 📅 EXECUTIVE TIMELINE → v1.0 (дедлайн 2026-07-18)
+
+Старт: 2026-06-20. Целевой релиз v1.0 (paper подан + launch): **18 июля 2026** (4 недели).
+Критический путь упирается в native-валидацию (только Yersultan) → она задаёт темп.
+
+| Веха | Дата (deadline) | Что готово | Кто/гейт |
+|------|-----------------|-----------|----------|
+| **M0 — Sync & affiliation** | **23 июня** (пн) | paper §6+README пересинк реальными числами; affiliation вписана; P1 = 100% | Chelsea ($0) + Yersultan (1 строка) |
+| **M1 — Data validated** | **30 июня** (пн) | 120 staged items native-validated → в DEV; часть → TEST; sentiment-добор | **Yersultan** (валидация) + Chelsea |
+| **M2 — Final baselines** | **4 июля** (пт) | перепрогон всех моделей на финальном validated DEV; official TEST-верификация; paper §6 финал | Chelsea (gate 0403) |
+| **M3 — Paper submit-ready** | **11 июля** (пт) | abstract/intro полиш, related-work, financial numbers; внешнее ревью (1 чел/LLM); arXiv-препринт залит | Chelsea + Yersultan (submit кнопка) |
+| **M4 — Launch** | **18 июля** (пт) | demo GIF; анонс live (X-тред + Show HN + r/ML + LinkedIn); leaderboard official | Yersultan (approve текст) |
+
+**Буфер:** если валидация M1 затянется — M2–M4 сдвигаются на столько же (валидация = bottleneck). Минимальный путь без расширения данных: M0→M2→M3→M4 за ~2 недели.
+
+### Что требуется от Yersultan (только это блокирует)
+1. **23 июн:** дать affiliation для paper (1 мин).
+2. **24–30 июн:** валидировать 120 staged items (~1-2 ч; чеклист в `benchmark/staging/README.md`).
+3. **по запросу:** пароль 0403 для платных прогонов; approve текста анонса перед публикацией.
+
+---
+
 ## 🗺️ Фазы
 
 ### P0 — Reproducibility fix `[$0]` `[Maya+Kai]` ✅ DONE (2026-06-20, commit 1e176fa)
@@ -120,4 +142,39 @@ P1 (paper, $0) ─┘                                                   ↑
 
 ---
 
-*Работаем строго по этому плану. Каждая фаза: recall → исполнение роем → reflection → verify (Vex/Kai) → commit+push → persist. Старт по утверждению Директора.*
+## 📋 ДЕТАЛЬНЫЙ TASK-BREAKDOWN (по вехам, в Trello)
+
+### M0 — Sync & affiliation → 23 июня `[$0]`
+- **T1** Пересинк README leaderboard-таблицы реальными числами (gemini лидер 87.5) + блок «leader flips synthetic→real». `[Chelsea]`
+- **T2** Пересинк paper §6: добавить real-data таблицу + «synthetic vs real» подсекцию (ceiling на 7 моделях). `[Chelsea]`
+- **T3** Вписать affiliation в paper header (заменить `[AFFILIATION TBD]`). `[Yersultan, 1 мин]`
+- *Критерий: paper = 100%, README/paper согласованы с REAL_DATA_LEADERBOARD.md.*
+
+### M1 — Data validated → 30 июня `[Yersultan-gated]`
+- **T4** Native-валидация 60 ЕНТ items (`benchmark/staging/knowledge_mc_real.jsonl`). `[Yersultan]`
+- **T5** Native-валидация 60 sentiment items (`sentiment_real.jsonl`). `[Yersultan]`
+- **T6** Перенос одобренных в DEV (validated:true) + маршрутизация части в private TEST (контаминация). `[Chelsea]`
+- **T7** Добор реальных данных до целевого объёма (если нужно): ещё ЕНТ/sentiment батчи через `integrate_real_sources.py`. `[Chelsea]`
+- *Критерий: DEV credible, ≥40% не-seed в knowledge_mc/sentiment, ceiling решён.*
+
+### M2 — Final baselines → 4 июля `[gate 0403]`
+- **T8** Перепрогон всех моделей на ФИНАЛЬНОМ validated DEV (gemini, gpt-4o-mini, llama-70b, scout, gpt-oss, qwen-fix). `[Chelsea, gate]`
+- **T9** Official TEST-верификация топ-моделей через `verify_on_test.py` → SUBMISSION_LEDGER. `[Chelsea, gate]`
+- **T10** Регенерация публичного leaderboard.md + HF Space финальными числами. `[Chelsea]`
+- *Критерий: ≥6 моделей на финальных данных, лидерборд official (не provisional).*
+
+### M3 — Paper submit-ready → 11 июля `[$0 + Yersultan submit]`
+- **T11** Полиш abstract/intro/conclusion реальными результатами; усилить «ceiling proof» как главный вклад. `[Chelsea]`
+- **T12** Внешнее ревью paper (1 человек ИЛИ cross-LLM критика). Исправить замечания. `[Chelsea+Yersultan]`
+- **T13** Сборка PDF (pandoc/LaTeX) + заливка препринта на arXiv/HF Papers. `[Yersultan submit]`
+- *Критерий: paper подан в venue (SIGTURK/LoResLM) ИЛИ препринт live.*
+
+### M4 — Launch → 18 июля `[external approve]`
+- **T14** Запись demo GIF по `docs/launch/demo-script.md`. `[Chelsea]`
+- **T15** Финализация анонса (X-тред, Show HN, r/ML, LinkedIn) — ceiling-находка как хук. `[Chelsea draft]`
+- **T16** Публикация анонса. `[Yersultan approve+post]`
+- *Критерий: анонс live на ≥3 площадках, GIF в README, ≥1 внешний сабмишн как цель недели.*
+
+---
+
+*Работаем строго по этому плану. Каждая фаза: recall → исполнение роем → reflection → verify (Vex/Kai) → commit+push → persist. Дедлайн v1.0 = 18 июля 2026. Bottleneck = native-валидация (M1).*
