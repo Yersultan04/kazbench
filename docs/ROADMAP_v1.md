@@ -44,8 +44,9 @@ KazBench v1.0 — **достоверный, опубликованный, зап
 - **Критерий:** любой может перепрогнать и получить те же числа. `tools/build_leaderboard.py` детерминирован.
 - **Зависимости:** нет. Делать первым.
 
-### P1 — Paper completion `[$0]` `[Leo + research-рой]` 🟡 SHIP-READY (2026-06-20, commit 1e176fa)
-> 13/21 [CITE] закрыты реальными ссылками; References (17, ACL-style); venue=SIGTURK; авторы. Vex verify: ZERO фабрикаций, SHIP для workshop. ОСТАЛОСЬ до camera-ready (~2ч): 8 [CITE-NEEDED] + verify author-lists [8-11] + legal refs [1,2] + ref[17] модели.
+### P1 — Paper completion `[$0]` `[Leo + research-рой]` ✅ DONE (2026-06-20, commits 1e176fa→7f55f49)
+> P1: 13/21 [CITE] закрыты + References + venue + авторы. P1b: ещё 8 [CITE-NEEDED] закрыты верифицированными [18-26] (WebSearch); исправлены 2 фактические ошибки (KazMMLU title, KazQAD venue=LREC-COLING 2024). Vex×2: ZERO фабрикаций, SHIP.
+> Осталось НЕблокирующее (до camera-ready): 3 deferred [CITE] (Llama-70B report + ref[17] — придут в P3; chrF-vs-BLEU), 3 minor [verify] ([15][16][20] URL/attribution). Paper submission-ready.
 
 - Закрыть 21 [CITE]-заглушку (поиск ACL Anthology / реальные ссылки: chrF, LLM-judge, KazMMLU, Belebele, KazSAnDRA и т.д.).
 - Заполнить [AUTHOR/AFFILIATION/EMAIL/TARGET VENUE].
