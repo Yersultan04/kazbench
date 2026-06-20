@@ -34,7 +34,9 @@ KazBench v1.0 — **достоверный, опубликованный, зап
 
 ## 🗺️ Фазы
 
-### P0 — Reproducibility fix `[$0]` `[Maya+Kai]`
+### P0 — Reproducibility fix `[$0]` `[Maya+Kai]` ✅ DONE (2026-06-20, commit 1e176fa)
+> `--validated-only` (default) + `--all-items`; run_metadata (n_total/n_validated/temp/seed/ts); колонка N(val) в лидерборде; 40/40 тестов; Kai verify SHIP.
+
 Снять «критический долг несопоставимости» **дёшево** (без перепрогона).
 - Добавить флаг `--validated-only` в `harness/run_eval.py` (оценивать только `validated:true`).
 - Зафиксировать в leaderboard-пайплайне: лидерборд = validated-N, явно подписать N.
@@ -42,8 +44,9 @@ KazBench v1.0 — **достоверный, опубликованный, зап
 - **Критерий:** любой может перепрогнать и получить те же числа. `tools/build_leaderboard.py` детерминирован.
 - **Зависимости:** нет. Делать первым.
 
-### P1 — Paper completion `[$0]` `[Leo + research-рой]`
-Параллельно с P0.
+### P1 — Paper completion `[$0]` `[Leo + research-рой]` 🟡 SHIP-READY (2026-06-20, commit 1e176fa)
+> 13/21 [CITE] закрыты реальными ссылками; References (17, ACL-style); venue=SIGTURK; авторы. Vex verify: ZERO фабрикаций, SHIP для workshop. ОСТАЛОСЬ до camera-ready (~2ч): 8 [CITE-NEEDED] + verify author-lists [8-11] + legal refs [1,2] + ref[17] модели.
+
 - Закрыть 21 [CITE]-заглушку (поиск ACL Anthology / реальные ссылки: chrF, LLM-judge, KazMMLU, Belebele, KazSAnDRA и т.д.).
 - Заполнить [AUTHOR/AFFILIATION/EMAIL/TARGET VENUE].
 - Выбрать venue (workshop ACL/EMNLP/SIGTURK 2026) + сверить дедлайн.
