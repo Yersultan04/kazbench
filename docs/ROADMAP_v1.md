@@ -53,7 +53,10 @@ KazBench v1.0 — **достоверный, опубликованный, зап
 - Выбрать venue (workshop ACL/EMNLP/SIGTURK 2026) + сверить дедлайн.
 - **Критерий:** 0 заглушек; paper компилируется; venue выбрана с датой.
 
-### P2 — Real-data expansion (ядро ceiling-fix) `[Yersultan-gated + малый API]` `[data-ml + Yersultan]`
+### P2 — Real-data expansion (ядро ceiling-fix) `[Yersultan-gated + малый API]` `[data-ml + Yersultan]` 🟡 PREP DONE (2026-06-20, commit 7571725)
+> Автономная часть готова: `tools/data/integrate_real_sources.py` тянет реальные ЕНТ из kz-transformers/...-mc (Apache-2.0). 60 items в `benchmark/staging/knowledge_mc_real.jsonl` (validated:false, source:exam, provenance+license, 0 структурных ошибок, PII-clean). НЕ в боевом DEV.
+> ⏸ ЖДЁТ Yersultan: native-валидация staging (чеклист в staging/README.md) → set validated:true → merge в DEV (часть → private TEST т.к. публичные экзамены = риск контаминации). Затем расширить sentiment (KazSAnDRA/100k reviews).
+
 Самая важная фаза для доверия. Превратить ceiling из «измерен» в «решён».
 - Интегрировать **Apache/CC-BY реальные источники** (из `docs/data-sources.md`): kazakh-unified-national-testing-mc (Apache, реальные ЕНТ), KazSAnDRA/100k reviews (sentiment), KazCulture (RC).
 - Довалидировать 304 pending DEV items (**native — только Yersultan**) ИЛИ заменить их реальными human-sourced.
