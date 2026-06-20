@@ -54,8 +54,11 @@ KazBench v1.0 — **достоверный, опубликованный, зап
 - **Критерий:** 0 заглушек; paper компилируется; venue выбрана с датой.
 
 ### P2 — Real-data expansion (ядро ceiling-fix) `[Yersultan-gated + малый API]` `[data-ml + Yersultan]` 🟡 PREP DONE (2026-06-20, commit 7571725)
-> Автономная часть готова: `tools/data/integrate_real_sources.py` тянет реальные ЕНТ из kz-transformers/...-mc (Apache-2.0). 60 items в `benchmark/staging/knowledge_mc_real.jsonl` (validated:false, source:exam, provenance+license, 0 структурных ошибок, PII-clean). НЕ в боевом DEV.
-> ⏸ ЖДЁТ Yersultan: native-валидация staging (чеклист в staging/README.md) → set validated:true → merge в DEV (часть → private TEST т.к. публичные экзамены = риск контаминации). Затем расширить sentiment (KazSAnDRA/100k reviews).
+> Автономная часть ГОТОВА (commits 7571725, 3c35311): `tools/data/integrate_real_sources.py` (--task knowledge_mc|sentiment|both). В `benchmark/staging/`:
+>   - `knowledge_mc_real.jsonl` — 60 реальных ЕНТ (kz-transformers, Apache-2.0, source:exam)
+>   - `sentiment_real.jsonl` — 60 реальных отзывов (Darmm, Apache-2.0, manual+crowdsourced, 5→3 класс, balanced)
+>   Оба: validated:false, provenance+license, 0 структурных ошибок, PII-clean (aidefence). НЕ в боевом DEV.
+> ⏸ ЖДЁТ Yersultan: native-валидация staging (чеклист в staging/README.md) → set validated:true → merge в DEV (часть → private TEST т.к. публичные данные = риск контаминации). KazSAnDRA/100k gated (нужен HF-токен) — Darmm взят как Apache-альтернатива.
 
 Самая важная фаза для доверия. Превратить ceiling из «измерен» в «решён».
 - Интегрировать **Apache/CC-BY реальные источники** (из `docs/data-sources.md`): kazakh-unified-national-testing-mc (Apache, реальные ЕНТ), KazSAnDRA/100k reviews (sentiment), KazCulture (RC).
