@@ -1,0 +1,27 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "adapter": "openai",
+  "kazbench_version": "0.1.0",
+  "split": "staging_eval",
+  "overall": 71.6667,
+  "run_metadata": {
+    "validated_only": false,
+    "n_total": 120,
+    "n_validated": 0,
+    "temperature": 0.0,
+    "seed": 42,
+    "timestamp": "2026-06-20T15:20:56Z"
+  },
+  "tasks": {
+    "knowledge_mc": {
+      "metric": "accuracy",
+      "score": 0.583333,
+      "n": 60
+    },
+    "sentiment": {
+      "metric": "accuracy",
+      "score": 0.85,
+      "n": 60
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "model": "meta-llama/llama-3.3-70b-instruct",
+  "adapter": "openai",
+  "kazbench_version": "0.1.0",
+  "split": "staging_eval",
+  "overall": 74.1667,
+  "run_metadata": {
+    "validated_only": false,
+    "n_total": 120,
+    "n_validated": 0,
+    "temperature": 0.0,
+    "seed": 42,
+    "timestamp": "2026-06-20T15:26:39Z"
+  },
+  "tasks": {
+    "knowledge_mc": {
+      "metric": "accuracy",
+      "score": 0.616667,
+      "n": 60
+    },
+    "sentiment": {
+      "metric": "accuracy",
+      "score": 0.866667,
+      "n": 60
+    }
+  }
+}
