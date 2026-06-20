@@ -80,11 +80,12 @@ KazBench v1.0 — **достоверный, опубликованный, зап
 - **Критерий:** GIF в README; анонс опубликован (Twitter thread + Show HN + r/ML).
 - **Зависимости:** P0–P3 закрыты. **Внешнее действие → Draft→Approve→Execute.**
 
-### P5 — Official leaderboard `[ongoing]` `[Kai]`
-- Включить приватную TEST-верификацию сабмишнов (убрать «provisional»).
-- Submission-ledger (anti-gaming) из review-findings.
-- **Критерий:** новые сабмишны верифицируются на TEST; лидерборд = official.
-- **Зависимости:** P2 (TEST готов), P3 (baseline-сабмишны).
+### P5 — Official leaderboard `[ongoing]` `[Kai]` 🟢 ИНФРА ГОТОВА (2026-06-20, commit d24159e)
+- ✅ `tools/verify_on_test.py` — maintainer прогон на приватном TEST + сравнение DEV→TEST + anti-gaming verdict (TEST>DEV или near-zero drop = 🚩flag). Протестирован на dummy ($0).
+- ✅ `results/SUBMISSION_LEDGER.md` — append-only audit trail (создаётся при первом verify).
+- ✅ CONTRIBUTING §4b — provisional→official flow задокументирован.
+- ⏸ Применение к реальным моделям: TEST-прогон жжёт API (под gate 0403) + TEST items сейчас validated:false (held-out, оцениваются через --all-items). Лидерборд станет «official» когда прогоним реальные сабмишны на TEST.
+- **Критерий (инфра):** ✅ выполнен. **Критерий (official scores):** ждёт реальных TEST-прогонов.
 
 ---
 
