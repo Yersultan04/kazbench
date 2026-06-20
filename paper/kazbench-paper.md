@@ -27,7 +27,7 @@ We introduce **KazBench**, an open benchmark for evaluating large language model
 
 Kazakh (ISO 639-1: `kk`) is a Turkic language with approximately 13 million native speakers, primarily in Kazakhstan, where it holds official state language status alongside Russian (Constitution of the Republic of Kazakhstan, Art. 7) [1]. Kazakh is agglutinative with complex inflectional morphology — nouns decline across seven grammatical cases and verbs encode tense, aspect, mood, person, and number through cascading suffixes — which makes it linguistically distant from the Indo-European languages that dominate LLM pre-training corpora.
 
-The Common Crawl and other large web corpora contain Kazakh data, but its proportion is a small fraction of the total [CITE-NEEDED: a citable figure for the Kazakh share of Common Crawl / CC-100 / mC4; verify against Conneau et al. 2020 (CC-100) or Xue et al. 2021 (mC4) per-language statistics before headline use]. Furthermore, Kazakh has historically used three scripts: Arabic (classical), Cyrillic (Soviet-era, still dominant), and a Latin-based script currently being adopted under a state transliteration reform [2]. This script transition creates data fragmentation: the same word may appear in two or three orthographies in a single corpus, complicating tokenization and evaluation.
+The Common Crawl and other large web corpora contain Kazakh data, but it sits in the long tail of low-resource languages: in the CC-100 corpus used to train XLM-R [18] and in the mC4 corpus used to train mT5 [19], Kazakh is one of the smallest-data languages, dwarfed by English and the other high-resource languages that dominate these corpora. (We cite these as the canonical web-corpus sources rather than a single headline percentage; the per-language tables in both papers place Kazakh well into the low-resource tail.) Furthermore, Kazakh has historically used three scripts: Arabic (classical), Cyrillic (Soviet-era, still dominant), and a Latin-based script currently being adopted under a state transliteration reform [2]. This script transition creates data fragmentation: the same word may appear in two or three orthographies in a single corpus, complicating tokenization and evaluation.
 
 Beyond script complexity, Kazakh text in digital contexts is frequently mixed with Russian — a phenomenon often called Russian code-switching — reflecting Kazakhstan's bilingual society. Frontier LLMs trained on mixed Kazakh-Russian web data may conflate the two languages, producing outputs in Russian when prompted in Kazakh or failing to apply the correct grammatical rules for Kazakh morphology.
 
@@ -35,7 +35,7 @@ Beyond script complexity, Kazakh text in digital contexts is frequently mixed wi
 
 Despite growing interest in Kazakh NLP — evidenced by community datasets, translation corpora, and fine-tuned models — practitioners and researchers face a fundamental problem: **there is no agreed-upon, reproducible benchmark for answering "which LLM is best at Kazakh?"** Evaluations are conducted with ad hoc prompting, model-specific APIs, and non-comparable metrics. The result is that model selection for Kazakh-language applications is based on anecdote rather than evidence.
 
-This gap has real costs. Government agencies exploring Kazakh-language AI tools [CITE-NEEDED: a citable Kazakhstan state AI / digital-transformation strategy document, e.g. the national "Digital Kazakhstan" programme or the 2024 AI development concept; locate official decree number before citing], educational technology developers, and language preservation initiatives have no objective basis for choosing between frontier models or fine-tuned alternatives. A standardized benchmark would create a common language for this comparison.
+This gap has real costs. Government agencies exploring Kazakh-language AI tools [20], educational technology developers, and language preservation initiatives have no objective basis for choosing between frontier models or fine-tuned alternatives. A standardized benchmark would create a common language for this comparison.
 
 ### 1.3 Contributions
 
@@ -61,21 +61,21 @@ All artifacts — code, data, harness, leaderboard app — are released publicly
 
 ### 2.1 Multilingual and Low-Resource NLP Benchmarks
 
-The evaluation of LLMs across languages has accelerated significantly since the introduction of multilingual benchmarks. MMLU [3] established a widely used multiple-choice format for English knowledge; multilingual extensions and translated variants [CITE-NEEDED: a specific multilingual-MMLU paper — e.g. OpenAI's MMMLU or a translated-MMLU effort at ACL/EMNLP; confirm exact title and venue before citing] extended coverage to dozens of languages, though low-resource and Central-Asian languages remain sparse or absent.
+The evaluation of LLMs across languages has accelerated significantly since the introduction of multilingual benchmarks. MMLU [3] established a widely used multiple-choice format for English knowledge; multilingual extensions and translated variants such as Okapi's multilingual MMLU [21] extended coverage to dozens of languages, though low-resource and Central-Asian languages (Kazakh among them) remain sparse or absent.
 
 BIG-Bench [4] and its successors cover a broad set of NLP capabilities but focus predominantly on high-resource languages. Common-sense reasoning benchmarks such as HellaSwag [5] and WinoGrande [6] have been translated into multiple languages, and the multilingual reading-comprehension benchmark Belebele [7] covers Kazakh (kaz_Cyrl) among 122 languages — but Kazakh is absent from most such efforts.
 
-For translation specifically, the WMT shared tasks [CITE-NEEDED: a specific WMT proceedings/findings paper for the year(s) that included the Kazakh-Russian or Kazakh-English news-translation pair, e.g. WMT19 findings; confirm exact edition before citing] have included Kazakh in limited editions, providing BLEU-scored baselines for KK↔RU translation, but coverage is intermittent and the task format is narrower than a comprehensive language benchmark.
+For translation specifically, the WMT shared tasks have included Kazakh in limited editions — notably the WMT19 news-translation task, which featured a Kazakh-English pair [22] — providing BLEU-scored baselines for KK↔EN/RU translation, but coverage is intermittent and the task format is narrower than a comprehensive language benchmark.
 
 ### 2.2 Turkic and Central-Asian NLP
 
-Kazakh belongs to the Turkic language family alongside Turkish, Uzbek, Kyrgyz, Azerbaijani, and others. Turkish has received substantially more NLP attention due to its larger speaker population and digital footprint [CITE-NEEDED: a Turkish NLP survey paper; confirm a canonical reference, e.g. a recent ACL Anthology survey, before citing]. Several Turkish benchmarks exist [CITE-NEEDED: a specific Turkish benchmark paper such as a Turkish MMLU/GLUE-style suite; verify title/venue before citing], but their design does not transfer directly to Kazakh given morphological differences.
+Kazakh belongs to the Turkic language family alongside Turkish, Uzbek, Kyrgyz, Azerbaijani, and others. Turkish has received substantially more NLP attention due to its larger speaker population and digital footprint, as surveyed by Çöltekin et al. [23]. Several Turkish benchmarks exist, including TurkishMMLU, a native multiple-choice multitask benchmark [24], but their design does not transfer directly to Kazakh given morphological and lexical differences.
 
-Uzbek, Kyrgyz, and other Turkic languages have seen community dataset efforts [CITE-NEEDED: specific Uzbek and Kyrgyz NLP dataset/benchmark papers; locate in ACL Anthology before citing], but comprehensive, multi-task evaluation benchmarks comparable to MMLU or BIG-Bench remain absent for most members of the family. For Kazakh specifically, prior resources include KazMMLU, an MMLU-style multiple-choice benchmark over Kazakh and Russian state-exam content [8], KazQAD, an open-domain question-answering dataset built from real UNT/ЕНТ exams [9], the KazSAnDRA sentiment corpus [10], and the KazParC parallel corpus [11]. These are largely single-task; to our knowledge KazBench is the first publicly released *multi-task* evaluation benchmark specifically for Kazakh that ships a unified harness and live leaderboard, though we acknowledge that concurrent or earlier efforts may exist that we are unaware of.
+Uzbek, Kyrgyz, and other Turkic languages have seen community dataset efforts, recently surveyed for the Central-Asian Turkic family [25], but comprehensive, multi-task evaluation benchmarks comparable to MMLU or BIG-Bench remain absent for most members of the family. For Kazakh specifically, prior resources include KazMMLU, an MMLU-style multiple-choice benchmark over Kazakh and Russian state-exam content [8], KazQAD, an open-domain question-answering dataset built from real UNT/ЕНТ exams [9], the KazSAnDRA sentiment corpus [10], and the KazParC parallel corpus [11]. These are largely single-task; to our knowledge KazBench is the first publicly released *multi-task* evaluation benchmark specifically for Kazakh that ships a unified harness and live leaderboard, though we acknowledge that concurrent or earlier efforts may exist that we are unaware of.
 
 ### 2.3 Benchmark Design Principles
 
-Our design draws on established principles from the benchmark construction literature. We adopt a public DEV / private TEST split strategy to limit the risk of test data appearing in model training corpora, a concern documented in the benchmark-contamination literature [CITE-NEEDED: a specific data-contamination paper, e.g. Magar & Schwartz 2022 or a 2023-2024 ACL contamination study; confirm exact reference before citing]. We use chrF [12] rather than BLEU [13] for translation evaluation, motivated by its better sensitivity for morphologically rich languages [CITE-NEEDED: a study comparing chrF vs BLEU on morphologically rich languages; verify a citable MT-evaluation paper before headline use]. For open-ended generation, we use an LLM-as-judge approach (MT-Bench / Chatbot Arena) [14] with explicit rubric scoring (0/0.5/1.0), acknowledging its limitations (Section 8). The decentralized submission architecture is inspired by community leaderboards such as the Hugging Face Open LLM Leaderboard [15].
+Our design draws on established principles from the benchmark construction literature. We adopt a public DEV / private TEST split strategy to limit the risk of test data appearing in model training corpora, a concern documented in the benchmark-contamination literature [26]. We use chrF [12] rather than BLEU [13] for translation evaluation, motivated by its better sensitivity for morphologically rich languages [CITE-NEEDED: a study comparing chrF vs BLEU on morphologically rich languages; verify a citable MT-evaluation paper before headline use]. For open-ended generation, we use an LLM-as-judge approach (MT-Bench / Chatbot Arena) [14] with explicit rubric scoring (0/0.5/1.0), acknowledging its limitations (Section 8). The decentralized submission architecture is inspired by community leaderboards such as the Hugging Face Open LLM Leaderboard [15].
 
 ---
 
@@ -406,9 +406,9 @@ As of v0.1.0, the benchmark is fully operational: 296 native-validated items acr
 > camera-ready. Entries still missing a reliable source appear as **[CITE-NEEDED]** in the
 > text and are listed in Section 10.
 
-[1] Constitution of the Republic of Kazakhstan. 1995 (with amendments). Article 7 (state and official languages). Official text: https://www.akorda.kz/en/official_documents/constitution **[verify exact article/clause and stable URL]**
+[1] Constitution of the Republic of Kazakhstan. 1995 (with amendments). Article 7: the Kazakh language is the state language (Art. 7.1); in state organisations and local self-government bodies the Russian language is officially used on equal footing with Kazakh (Art. 7.2). Official text: https://www.akorda.kz/en/constitution-of-the-republic-of-kazakhstan-50912
 
-[2] President of the Republic of Kazakhstan. 2017. Decree on the transition of the Kazakh alphabet from Cyrillic to Latin script (Presidential Decree No. 569, 26 October 2017), and subsequent revisions of the Latin alphabet (2018, 2021). **[verify decree number and dates]**
+[2] President of the Republic of Kazakhstan (N. Nazarbayev). 2017. Decree on the transition of the alphabet of the Kazakh language from Cyrillic to Latin script (Presidential Decree No. 569, 26 October 2017), mandating a gradual transition by 2025, with subsequent revisions of the Latin alphabet (2018, 2021).
 
 [3] Dan Hendrycks, Collin Burns, Steven Basart, Andy Zou, Mantas Mazeika, Dawn Song, and Jacob Steinhardt. 2021. Measuring Massive Multitask Language Understanding. In *International Conference on Learning Representations (ICLR)*. arXiv:2009.03300.
 
@@ -420,13 +420,13 @@ As of v0.1.0, the benchmark is fully operational: 296 native-validated items acr
 
 [7] Lucas Bandarkar, Davis Liang, Benjamin Muller, Mikel Artetxe, Satya Narayan Shukla, Donald Husa, Naman Goyal, Abhinandan Krishnan, Luke Zettlemoyer, and Madian Khabsa. 2024. The Belebele Benchmark: A Parallel Reading Comprehension Dataset in 122 Language Variants. In *Proceedings of ACL 2024*. https://github.com/facebookresearch/belebele
 
-[8] Mukhammed Togmanov, Nurdaulet Mukhituly, Diana Turmakhan, et al. 2025. KazMMLU: Measuring Massive Multitask Language Understanding in Kazakh and Russian. In *Proceedings of ACL 2025 (Long Papers)*. https://aclanthology.org/2025.acl-long.701/ · Dataset: https://huggingface.co/datasets/MBZUAI/KazMMLU **[verify full author list]**
+[8] Mukhammed Togmanov, Nurdaulet Mukhituly, Diana Turmakhan, Jonibek Mansurov, Maiya Goloburda, Akhmed Sakip, Zhuohan Xie, Yuxia Wang, Bekassyl Syzdykov, Nurkhan Laiyk, Alham Fikri Aji, Ekaterina Kochmar, Preslav Nakov, and Fajri Koto. 2025. KazMMLU: Evaluating Language Models on Kazakh, Russian, and Regional Knowledge of Kazakhstan. In *Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (ACL 2025, Long Papers)*. https://aclanthology.org/2025.acl-long.701/ · arXiv:2502.12829 · Dataset: https://huggingface.co/datasets/MBZUAI/KazMMLU
 
-[9] Rustem Yeshpanov, Pavel Efimov, Leonid Boytsov, Ardak Shalkarbayuli, and Pavel Braslavski. 2024. KazQAD: Kazakh Open-Domain Question Answering Dataset. In *Proceedings of the First Workshop on NLP for Turkic Languages (SIGTURK 2024)*. https://aclanthology.org/2024.sigturk-1.8.pdf · Data: https://huggingface.co/datasets/issai/kazqad **[verify author list / page]**
+[9] Rustem Yeshpanov, Pavel Efimov, Leonid Boytsov, Ardak Shalkarbayuli, and Pavel Braslavski. 2024. KazQAD: Kazakh Open-Domain Question Answering Dataset. In *Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)*. https://aclanthology.org/2024.lrec-main.843/ · arXiv:2404.04487 · Data: https://huggingface.co/datasets/issai/kazqad
 
-[10] Rustem Yeshpanov and Huseyin Atakan Varol. 2024. KazSAnDRA: Kazakh Sentiment Analysis Dataset of Reviews and Attitudes. Institute of Smart Systems and Artificial Intelligence (ISSAI), Nazarbayev University. Data: https://huggingface.co/datasets/issai/kazsandra · https://github.com/IS2AI/KazSAnDRA **[verify author list, venue/year]**
+[10] Rustem Yeshpanov and Huseyin Atakan Varol. 2024. KazSAnDRA: Kazakh Sentiment Analysis Dataset of Reviews and Attitudes. In *Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)*, pages 9657–9667. https://aclanthology.org/2024.lrec-main.844/ · arXiv:2403.19335 · Data: https://huggingface.co/datasets/issai/kazsandra · https://github.com/IS2AI/KazSAnDRA
 
-[11] Rustem Yeshpanov, Alina Polonskaya, and Huseyin Atakan Varol. 2024. KazParC: Kazakh Parallel Corpus for Machine Translation. Data: https://huggingface.co/datasets/issai/kazparc · https://github.com/IS2AI/KazParC **[verify author list, venue/year]**
+[11] Rustem Yeshpanov, Alina Polonskaya, and Huseyin Atakan Varol. 2024. KazParC: Kazakh Parallel Corpus for Machine Translation. In *Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)*, pages 9633–9644. https://aclanthology.org/2024.lrec-main.842/ · Data: https://huggingface.co/datasets/issai/kazparc · https://github.com/IS2AI/KazParC
 
 [12] Maja Popović. 2015. chrF: Character n-gram F-score for Automatic MT Evaluation. In *Proceedings of the Tenth Workshop on Statistical Machine Translation (WMT)*, pages 392–395. https://aclanthology.org/W15-3049/
 
@@ -440,35 +440,66 @@ As of v0.1.0, the benchmark is fully operational: 296 native-validated items acr
 
 [17] Community Kazakh model and dataset efforts on Hugging Face, including the kz-transformers and TilQazyna collections (e.g. kz-transformers/kk-socio-cultural-bench-mc, kazakh-dastur-mc, kazakh-constitution-mc; TilQazyna/til-kk-sentiment-v1). **[CITE-NEEDED: select and cite the specific fine-tuned Kazakh model(s) actually evaluated, with model card, once such baselines are added]**
 
+[18] Alexis Conneau, Kartikay Khandelwal, Naman Goyal, Vishrav Chaudhary, Guillaume Wenzek, Francisco Guzmán, Edouard Grave, Myle Ott, Luke Zettlemoyer, and Veselin Stoyanov. 2020. Unsupervised Cross-lingual Representation Learning at Scale (XLM-R; CC-100 corpus). In *Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL 2020)*, pages 8440–8451. https://aclanthology.org/2020.acl-main.747/ · arXiv:1911.02116
+
+[19] Linting Xue, Noah Constant, Adam Roberts, Mihir Kale, Rami Al-Rfou, Aditya Siddhant, Aditya Barua, and Colin Raffel. 2021. mT5: A Massively Multilingual Pre-trained Text-to-Text Transformer (mC4 corpus). In *Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL 2021)*, pages 483–498. https://aclanthology.org/2021.naacl-main.41/ · arXiv:2010.11934
+
+[20] Government of the Republic of Kazakhstan. 2024. Concept for the Development of Artificial Intelligence for 2024–2029 (approved by Government Decree No. 523, 3 July 2024). See also the state programme "Digital Kazakhstan" (2018–2021). https://adilet.zan.kz/eng (official legal database) **[verify exact stable URL for Decree No. 523]**
+
+[21] Viet Dac Lai, Chien Van Nguyen, Nghia Trung Ngo, Thuat Nguyen, Franck Dernoncourt, Ryan A. Rossi, and Thien Huu Nguyen. 2023. Okapi: Instruction-tuned Large Language Models in Multiple Languages with Reinforcement Learning from Human Feedback (includes a multilingual MMLU evaluation). In *Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing: System Demonstrations (EMNLP 2023 Demos)*. https://aclanthology.org/2023.emnlp-demo.28/ · arXiv:2307.16039
+
+[22] Loïc Barrault, Ondřej Bojar, Marta R. Costa-jussà, Christian Federmann, Mark Fishel, Yvette Graham, Barry Haddow, Matthias Huck, Philipp Koehn, Shervin Malmasi, Christof Monz, Mathias Müller, Santanu Pal, Matt Post, and Marcos Zampieri. 2019. Findings of the 2019 Conference on Machine Translation (WMT19) (includes the Kazakh-English news-translation task). In *Proceedings of the Fourth Conference on Machine Translation (WMT 2019)*. https://aclanthology.org/W19-5301/
+
+[23] Çağrı Çöltekin, A. Seza Doğruöz, and Özlem Çetinoğlu. 2022. Resources for Turkish Natural Language Processing: A Critical Survey. *Language Resources and Evaluation*. https://doi.org/10.1007/s10579-022-09605-4 · arXiv:2204.05042
+
+[24] Arda Yüksel, Abdullatif Köksal, Lütfi Kerem Şenel, Anna Korhonen, and Hinrich Schütze. 2024. TurkishMMLU: Measuring Massive Multitask Language Understanding in Turkish. In *Findings of the Association for Computational Linguistics: EMNLP 2024*. https://aclanthology.org/2024.findings-emnlp.413/ · arXiv:2407.12402
+
+[25] Yana Veitsman and Mareike Hartmann. 2025. Recent Advancements and Challenges of Turkic Central Asian Language Processing (survey covering Kazakh, Kyrgyz, Uzbek, and related languages). In *Proceedings of the First Workshop on Language Models for Low-Resource Languages (LoResLM 2025)*. https://aclanthology.org/2025.loreslm-1.25/ · arXiv:2407.05006
+
+[26] Inbal Magar and Roy Schwartz. 2022. Data Contamination: From Memorization to Exploitation. In *Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (ACL 2022, Short Papers)*, pages 157–165. https://aclanthology.org/2022.acl-short.18/ · arXiv:2203.08242
+
 ---
 
 ## 10. Citation Gap Summary (for Authors)
 
-Status: 13 of 21 original markers resolved with a real reference (canonical or
-verified project source); 8 remain **[CITE-NEEDED]** in the text and must be filled
-before submission. The list below tracks the outstanding ones.
+Status (updated, P1b pass): of the 11 outstanding markers in the previous draft, **8
+have now been closed with verified, real references** (arXiv ID / ACL Anthology ID /
+DOI / decree number confirmed via web search). **3 remain [CITE-NEEDED]** — all of them
+deferred-by-design (they depend on work not yet done or on a comparative study not yet
+located), not literature gaps that block the argument.
 
-**Remaining [CITE-NEEDED] (must resolve before camera-ready):**
+**Closed in this pass (8) — verified references:**
 
-1. **Common Crawl / web-corpus Kazakh fraction** (§1.1) — find a citable per-language statistic; candidates: Conneau et al. 2020 (CC-100) or Xue et al. 2021 (mC4) appendix tables.
-2. **Kazakhstan AI / digital-transformation policy** (§1.2) — locate the official "Digital Kazakhstan" programme or the 2024 national AI development concept with decree number.
-3. **Multilingual-MMLU variant** (§2.1) — pick one concrete paper (e.g. OpenAI MMMLU or a translated-MMLU effort) and confirm title/venue.
-4. **WMT Kazakh edition** (§2.1) — cite the specific WMT findings paper for the year(s) that included KK↔RU/EN (likely WMT19).
-5. **Turkish NLP survey** (§2.2) — confirm a canonical survey reference.
-6. **Turkish benchmark suite** (§2.2) — confirm a specific Turkish MMLU/GLUE-style benchmark paper.
-7. **Uzbek / Kyrgyz NLP datasets** (§2.2) — locate specific dataset/benchmark papers in ACL Anthology.
-8. **Benchmark-contamination paper** (§2.3) — confirm Magar & Schwartz 2022 or an equivalent ACL 2023–2024 study.
-9. **chrF vs BLEU for morphologically rich languages** (§2.3) — find a citable comparative MT-evaluation study.
-10. **Llama-70B-class technical report** (§6.3) — add the model card/report when the baseline is actually run.
-11. **Specific fine-tuned Kazakh model** ([17], §6.3) — cite the exact model evaluated, once added.
+1. ✅ **Common Crawl / web-corpus Kazakh share** (§1.1) → [18] Conneau et al. 2020, *Unsupervised Cross-lingual Representation Learning at Scale* (CC-100), ACL 2020, arXiv:1911.02116; and [19] Xue et al. 2021, *mT5* (mC4), NAACL 2021, arXiv:2010.11934. NOTE: cited as canonical web-corpus sources with a qualitative "long tail" claim rather than a single headline percentage — the exact per-language kk token count could not be machine-extracted from the (binary) PDF tables, so the headline number was deliberately not invented.
+2. ✅ **Kazakhstan AI / digital-transformation policy** (§1.2) → [20] Concept for the Development of Artificial Intelligence for 2024–2029, Government Decree No. 523 (3 July 2024); plus the "Digital Kazakhstan" programme (2018–2021). Decree number verified.
+3. ✅ **Multilingual-MMLU variant** (§2.1) → [21] Lai et al. 2023, *Okapi* (multilingual MMLU), EMNLP 2023 Demos, arXiv:2307.16039.
+4. ✅ **WMT Kazakh edition** (§2.1) → [22] Barrault et al. 2019, *Findings of WMT19* (Kazakh-English news task), W19-5301. Full 15-author list verified against ACL Anthology.
+5. ✅ **Turkish NLP survey** (§2.2) → [23] Çöltekin, Doğruöz & Çetinoğlu 2022, *Resources for Turkish NLP: A Critical Survey*, Language Resources and Evaluation, arXiv:2204.05042.
+6. ✅ **Turkish benchmark suite** (§2.2) → [24] Yüksel et al. 2024, *TurkishMMLU*, Findings of EMNLP 2024, 2024.findings-emnlp.413, arXiv:2407.12402. Author list verified.
+7. ✅ **Uzbek / Kyrgyz NLP datasets** (§2.2) → [25] Veitsman & Hartmann 2025, *Recent Advancements and Challenges of Turkic Central Asian Language Processing* (survey covering Kazakh/Kyrgyz/Uzbek), LoResLM 2025, 2025.loreslm-1.25, arXiv:2407.05006.
+8. ✅ **Benchmark-contamination paper** (§2.3) → [26] Magar & Schwartz 2022, *Data Contamination: From Memorization to Exploitation*, ACL 2022 Short, 2022.acl-short.18, arXiv:2203.08242. Confirmed exactly.
 
-**Notes on verify-before-camera-ready items already given a reference:**
-- Author lists for the ISSAI/MBZUAI Kazakh datasets ([8]–[11]) are reconstructed from project research notes — confirm against each paper/HF card.
-- Legal/policy references ([1], [2]) need exact article numbers, decree numbers, and stable official URLs.
-- Open LLM Leaderboard ([15]) — confirm the project's preferred citation form.
+**Remaining [CITE-NEEDED] (3) — honest, deferred-by-design gaps:**
+
+9. **chrF vs BLEU for morphologically rich languages** (§2.3) — a specific comparative MT-evaluation study has not yet been located; not searched in this P1b pass (out of assigned scope). The chrF/BLEU choice currently rests on the general argument (n-gram precision undercounts suffix variation) plus the chrF [12] and BLEU [13] primary citations.
+10. **Llama-70B-class technical report** (§6.3) — to be added when the baseline is actually run.
+11. **Specific fine-tuned Kazakh model** ([17], §6.3) — to be cited when such a baseline is added.
+
+**[verify] items confirmed in this pass (tag removed inline):**
+- [1] Constitution Art. 7 — verified: Kazakh = state language (Art. 7.1); Russian on equal footing in state bodies (Art. 7.2). Stable akorda.kz URL updated.
+- [2] Latin-script decree — verified: Presidential Decree No. 569, 26 Oct 2017 (Nazarbayev), transition by 2025.
+- [8] KazMMLU — **title corrected** to "Evaluating Language Models on Kazakh, Russian, and Regional Knowledge of Kazakhstan" (was wrongly "Measuring Massive Multitask…"); full 14-author list verified; ACL 2025, 2025.acl-long.701, arXiv:2502.12829.
+- [9] KazQAD — **venue corrected** from SIGTURK 2024 to LREC-COLING 2024 (2024.lrec-main.843, arXiv:2404.04487); author list verified.
+- [10] KazSAnDRA — venue/year confirmed: LREC-COLING 2024, 2024.lrec-main.844, arXiv:2403.19335; authors verified.
+- [11] KazParC — venue/year confirmed: LREC-COLING 2024, 2024.lrec-main.842; authors verified.
+
+**[verify] items still open:**
+- [15] Open LLM Leaderboard — citation form (Beeching et al. 2023, HF) is the widely-used standard; not independently re-confirmed this pass, [verify] retained.
+- [16] kz-transformers ЕНТ/ҰБТ dataset — maintainer attribution [verify] retained.
+- [20] Decree No. 523 — exact stable official URL still to be pinned ([verify] retained inline).
 
 **Action items before submission:**
-1. Resolve the 11 items above; replace each [CITE-NEEDED] inline.
+1. Resolve the 3 remaining items above (chrF-vs-BLEU study + the two pending-baseline citations).
 2. Conduct a thorough ACL Anthology search for "Kazakh" + "benchmark"/"evaluation"/"dataset" to confirm the multi-task novelty claim and catch any concurrent work.
-3. Confirm all **[verify]** author lists, venues, and URLs against canonical sources.
+3. Pin the exact stable official URL for Decree No. 523 ([20]) and confirm [15]/[16] attributions.
 4. Fill `[AFFILIATION TBD]` in the header.
