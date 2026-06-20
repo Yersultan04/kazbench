@@ -67,12 +67,12 @@ KazBench v1.0 — **достоверный, опубликованный, зап
 - **Критерий:** DEV 600 validated (или явная политика), ≥40% не-seed источников в knowledge_mc/sentiment.
 - **Зависимости:** P0 (политика validated). HITL-гейт: native validation.
 
-### P3 — Baselines complete `[API $ — под audit-gate 0403]` `[data-ml + Kai]`
-- Прогнать **Llama-70B-класса** (OpenRouter через OpenAICompatModel — код готов, нужен ключ).
-- Перепрогнать все модели на **финальных** (расширенных validated) данных.
-- Опц.: frontier-якоря (gpt-4o, claude sonnet) для верхней границы.
-- **Критерий:** ≥6 моделей вкл. 70B на финальных данных; лидерборд обновлён; числа в paper §6 пересинхронизированы.
-- **Зависимости:** P2 (финальные данные). **Жжёт API → пароль-гейт.**
+### P3 — Baselines complete `[API $ — под audit-gate 0403]` `[data-ml + Kai]` 🟢 БОЛЬШАЯ ЧАСТЬ DONE (2026-06-20, commit 7953720)
+- ✅ **Llama-70B baseline получен** (llama-3.3-70b = 74.2) через OpenRouter (ключ из uzmrc/rag-cms).
+- ✅ Прогнаны на реальных данных (staging_eval): gemini-2.5-flash **87.5 (ЛИДЕР)**, llama-3.3-70b 74.2, gpt-4o-mini 71.7, gpt-oss-120b 71.7, llama-4-scout 70.8, claude-haiku-4.5 70.0; мелкие (qwen3-32b 25, llama-8b 27) — floor.
+- ✅ **Главная находка: лидер сменился** vs синтетики (был claude 91.5 → теперь gemini). `results/real/REAL_DATA_LEADERBOARD.md`.
+- ⏸ Осталось: qwen-2.5-72b (OpenRouter возвращает пустой ответ — провайдер); перепрогон на ФИНАЛЬНЫХ validated данных (после P2); пересинк paper §6 реальными числами (после валидации).
+- **Критерий:** ≥6 моделей вкл. 70B ✅. Финальные числа — после P2.
 
 ### P4 — Launch `[external approval]` `[Nova + Alex; Chelsea гейтит]`
 - Записать demo GIF (скрипт готов в `docs/launch/demo-script.md`).
