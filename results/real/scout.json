@@ -1,0 +1,27 @@
+{
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "adapter": "openai",
+  "kazbench_version": "0.1.0",
+  "split": "staging_eval",
+  "overall": 76.6667,
+  "run_metadata": {
+    "validated_only": false,
+    "n_total": 120,
+    "n_validated": 0,
+    "temperature": 0.0,
+    "seed": 42,
+    "timestamp": "2026-06-20T07:17:25Z"
+  },
+  "tasks": {
+    "knowledge_mc": {
+      "metric": "accuracy",
+      "score": 0.7,
+      "n": 60
+    },
+    "sentiment": {
+      "metric": "accuracy",
+      "score": 0.833333,
+      "n": 60
+    }
+  }
+}

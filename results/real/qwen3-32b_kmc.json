@@ -1,0 +1,22 @@
+{
+  "model": "qwen/qwen3-32b",
+  "adapter": "openai",
+  "kazbench_version": "0.1.0",
+  "split": "staging_eval",
+  "overall": 25.0,
+  "run_metadata": {
+    "validated_only": false,
+    "n_total": 60,
+    "n_validated": 0,
+    "temperature": 0.0,
+    "seed": 42,
+    "timestamp": "2026-06-20T07:37:53Z"
+  },
+  "tasks": {
+    "knowledge_mc": {
+      "metric": "accuracy",
+      "score": 0.25,
+      "n": 60
+    }
+  }
+}

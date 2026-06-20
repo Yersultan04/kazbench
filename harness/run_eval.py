@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 # Security constants
 # ---------------------------------------------------------------------------
 
-_ALLOWED_SPLITS: set[str] = {"dev", "test"}
+_ALLOWED_SPLITS: set[str] = {"dev", "test", "staging_eval"}
 
 # Maximum size (bytes) for a single results JSON loaded by tooling
 MAX_RESULT_FILE_BYTES: int = 1 * 1024 * 1024  # 1 MB

@@ -1,0 +1,22 @@
+{
+  "model": "llama-3.1-8b-instant",
+  "adapter": "openai",
+  "kazbench_version": "0.1.0",
+  "split": "staging_eval",
+  "overall": 26.6667,
+  "run_metadata": {
+    "validated_only": false,
+    "n_total": 60,
+    "n_validated": 0,
+    "temperature": 0.0,
+    "seed": 42,
+    "timestamp": "2026-06-20T07:40:23Z"
+  },
+  "tasks": {
+    "knowledge_mc": {
+      "metric": "accuracy",
+      "score": 0.266667,
+      "n": 60
+    }
+  }
+}
